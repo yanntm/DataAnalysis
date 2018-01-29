@@ -1,28 +1,14 @@
 # J'ai mis du paragraphe
-*quelques mots* ou  _quelques mots_
-**plus important**
-__également important__
-Mon texte `code` fin de mon texte
-> Ce texte apparaîtra dans un élément HTML
-Premier paragraphe
+## Introduction
+* This page compares the performance of DiVinE, SPIN and LTSmin. 
 
-Deuxième paragraphe   
+ The BEEM models were written in DVE format which can be directly parsed by
+ DiVinE and LTSmin. A translation to Promela enables these models to be used in SPIN. 
+ However, the translation also introduces differences in the state and transition count 
+ rendering the performance results incomparable. Other models are simply too small to 
+ obtain measurable results. Therefore, the set of models can be limited to those of interest.
 
-#gaire des liste 
 
-Liste non ordonnées
-* Pommes
-* Poires
-    * Sous élément avec au moins quatre espaces devant.
-    
-Liste Ordonnées 
-1. mon premier
-2. mon deuxième
-
-Et une liste en mode case à cocher
-
-- [ ] Case non cochée
-- [x] Case cochée
 
 # un titre de premier niveau
 #### un titre de quatrième niveau
