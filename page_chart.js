@@ -28,14 +28,9 @@ function handleSampleDataQueryResponse(response) {
         alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
         return;
     }
-    var options = {
-		title: 'Age vs. Weight comparison',
-		hAxis: {title: 'Age', minValue: 0, maxValue: 15},
-		Axis: {title: 'Weight', minValue: 0, maxValue: 15},
-		legend: 'none'
-	};
+    
     var data = response.getDataTable();
     var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
-    chart.draw(data,options);
+    chart.draw(data,{ height: 500 });
 }
 
