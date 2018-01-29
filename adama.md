@@ -1,6 +1,6 @@
 # J'ai mis du paragraphe
 ## Introduction
-* This page compares the performance of DiVinE, SPIN and LTSmin. 
+ This page compares the performance of DiVinE, SPIN and LTSmin. 
 
  The BEEM models were written in DVE format which can be directly parsed by
  DiVinE and LTSmin. A translation to Promela enables these models to be used in SPIN. 
@@ -10,8 +10,8 @@
 
 
 
-# un titre de premier niveau
-#### un titre de quatrième niveau
+# Scatter Chart
+#### 
 
 
 Lien 
