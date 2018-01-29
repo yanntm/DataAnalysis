@@ -24,6 +24,6 @@
 	Lien 
 
 	[lien vers la page de vincent](vincent.md)
-    <div id="chart_div" style="width: 500px; height: 500px;"></div>
+    <div id="chart_div" style="width: 600px; height: 500px;"></div>
   </body>
 </html>
