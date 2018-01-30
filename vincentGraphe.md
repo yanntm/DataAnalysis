@@ -1,4 +1,4 @@
-# graphe Exemple
+# Graphe Exemple
 
 <html>
   <head>
