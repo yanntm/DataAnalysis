@@ -34,7 +34,6 @@
 			//extraction des resultats de la requete dans une table de donnees
 			var data = response.getDataTable();
 
-			console.log(data);
 
 			/*AFFICHAGE DATATABLE*/
 
@@ -42,26 +41,37 @@
 			//dans lequel la Table sera encapsulee dans le fichier HTML.
 			var table = new google.visualization.Table(document.getElementById('table_div'));
 
-			//affichage graphique du ScatterChart
+			//affichage graphique de la table de donnees recue en reponse
 			table.draw(data);
 
+
 			/*AFFICHAGE SCATTERCHART*/
+
+			var view = new google.visualization.DataView(data);
+			view.setColumns([0, 1, {
+				label: 'y=x',
+				type: 'number',
+				calc: function (dt, row) {return dt.getValue(row, 0)}
+			}]);
 
 			//Configuration du schema
 			var options = {
 					title: '[-its] VS [-its -smt -ltsminpath] Durations',
 					hAxis: {title: '-its'},
 					vAxis: {title: '-its -smt -ltsminpath'},
-					legend: 'none',
-					trendlines: { 0: {} }    // Trendline (fonction x=y)
-				}; 
+					
+					seriesType: 'scatter',
+					series: {
+						1: {type: 'line'}
+					}
+			};
 			
 			//creation du ScatterChart. On passe en parametre un pointeur vers l'element DOM
 			//dans lequel le ScatterChart sera encapsule dans le fichier HTML.
-			var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+			var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 
 			//affichage graphique du ScatterChart
-			chart.draw(data);
+			chart.draw(view, options);
 		}
 	</script>
 	<div id="table_div" style="width: 600px; height: 300px;"></div>
