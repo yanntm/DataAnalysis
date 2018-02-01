@@ -18,7 +18,7 @@
 		function sendQuery1() {
 			
 			//Requete Google Query
-			var queryString = encodeURIComponent('SELECT A, B, C, H WHERE D ="-its" LIMIT 30');
+			var queryString = encodeURIComponent('SELECT A, B, C, H WHERE D ="-its" LABEL H "-its Duration"');
 
 			var query = new google.visualization.Query(
 					'https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryString);
@@ -27,7 +27,7 @@
 			query.send(sendQuery2);
 		}
 
-		function sendQuery2() {
+		function sendQuery2(response) {
 			if (response.isError()) {
 				alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
 				return;
@@ -36,7 +36,7 @@
 			dataQuery1 = response.getDataTable();
 
 			//Requete Google Query
-			var queryString = encodeURIComponent('SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" LIMIT 30');
+			var queryString = encodeURIComponent('SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" LABEL H "-its -smt -ltsminpath Duration"');
 
 			var query = new google.visualization.Query(
 					'https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryString);
@@ -56,7 +56,8 @@
 			//extraction des resultats de la requete dans une table de donnees
 			var dataQuery2 = response.getDataTable();
 
-			var data = google.visualization.join(dataQuery1, dataQuery2, 'inner', [[1,1], [2,2]], 
+			alert("-its Results : " + dataQuery1.getNumberOfRows() + " , " + "-its -smt -ltsminpath Results : " + dataQuery2.getNumberOfRows());
+			var data = google.visualization.data.join(dataQuery1, dataQuery2, 'inner', [[1,1], [2,2]], 
 				[3], [3]);
 
 			/*AFFICHAGE DATATABLE*/
@@ -66,16 +67,16 @@
 			var table = new google.visualization.Table(document.getElementById('table_div'));
 
 			//affichage graphique de la table de donnees recue en reponse
-			table.draw(data);
+			table.draw(data, {showRowNumber : true});
 
 
 			/*AFFICHAGE SCATTERCHART*/
 
 			var view = new google.visualization.DataView(data);
-			view.setColumns([0, 1, {
+			view.setColumns([2, 3, {
 				label: 'y=x',
 				type: 'number',
-				calc: function (dt, row) {return dt.getValue(row, 0)}
+				calc: function (dt, row) {return dt.getValue(row, 2)}
 			}]);
 
 			//Configuration du schema
