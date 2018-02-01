@@ -9,20 +9,42 @@
 			google.charts.load('current', {'packages':['corechart','table']});
 
 			//lance la fonction drawChart une fois la librairie chargee
-			google.charts.setOnLoadCallback(drawChart);
+			google.charts.setOnLoadCallback(sendQuery1);
+
+			var dataQuery1;
+			var dataQuery2;
 
 		//declaration
-		function drawChart() {
+		function sendQuery1() {
 			
 			//Requete Google Query
-			var queryString = encodeURIComponent('SELECT H, I WHERE D ="-its" OR D ="-its -smt -ltsminpath" LIMIT 30');
+			var queryString = encodeURIComponent('SELECT A, B, C, H WHERE D ="-its" LIMIT 30');
 
 			var query = new google.visualization.Query(
 					'https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryString);
 
 			//envoi de la Requete avec en parametre la fonction a appeler quand la reponse arrive
-			query.send(handleSampleDataQueryResponse);
+			query.send(sendQuery2);
 		}
+
+		function sendQuery2() {
+			if (response.isError()) {
+				alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+				return;
+			}
+
+			dataQuery1 = response.getDataTable();
+
+			//Requete Google Query
+			var queryString = encodeURIComponent('SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" LIMIT 30');
+
+			var query = new google.visualization.Query(
+					'https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryString);
+
+			//envoi de la Requete avec en parametre la fonction a appeler quand la reponse arrive
+			query.send(handleSampleDataQueryResponse);	
+		}
+
 
 		//cette fonction a pour parametre un objet de type QueryAnswer
 		function handleSampleDataQueryResponse(response) {
@@ -32,8 +54,10 @@
 			}
 
 			//extraction des resultats de la requete dans une table de donnees
-			var data = response.getDataTable();
+			var dataQuery2 = response.getDataTable();
 
+			var data = google.visualization.join(dataQuery1, dataQuery2, 'inner', [[1,1], [2,2]], 
+				[3], [3]);
 
 			/*AFFICHAGE DATATABLE*/
 
