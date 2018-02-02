@@ -26,7 +26,7 @@
 
 						//fusionne les deux tables avec Join
 						var data = google.visualization.data.join(dataQuery1, dataQuery2, 'inner', [[1,1], [2,2]], [3], [3]);
-						console.log("dataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataMerged: " + data.getNumberOfRows());
+						console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
 
 						//genere les graphiques Google Charts et les affiche
 						drawChart(data);
@@ -35,8 +35,8 @@
 			});
 
 		var url = 'https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=';
-		var query1 = 'SELECT A, B, C, H WHERE D ="-its" LABEL H "-its Duration"';
-		var query2 = 'SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" LABEL H "-its -smt -ltsminpath Duration"';
+		var query1 = 'SELECT A, B, C, H WHERE D ="-its" AND F = 0';
+		var query2 = 'SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" AND F = 0';
 	</script>
 	<div id="table_div" style="width: 600px; height: 300px;"></div>
 	<div id="chart_div" style="width: 600px; height: 500px;"></div>
