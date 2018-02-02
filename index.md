@@ -35,8 +35,8 @@
 			});
 
 		var url = 'https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=';
-		var query1 = 'SELECT A, B, C, H WHERE D ="-its" AND F = 0';
-		var query2 = 'SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" AND F = 0';
+		var query1 = 'SELECT A, B, C, H WHERE D ="-its" AND F = 0 LABEL H "-its"';
+		var query2 = 'SELECT A, B, C, H WHERE D ="-its -smt -ltsminpath" AND F = 0 LABEL H "-its -smt -ltsminpath"';
 	</script>
 	<div id="table_div" style="width: 600px; height: 300px;"></div>
 	<div id="chart_div" style="width: 600px; height: 500px;"></div>
