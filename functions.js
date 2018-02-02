@@ -55,3 +55,38 @@ function drawChart(data) {
 	//affichage graphique du ScatterChart
 	chart.draw(view, options);
 }
+
+function startQuerying() {
+
+	//extraction du formulaire HTML
+	var url = document.getElementById("url").value;
+	var query1 = document.getElementById("query1").value;
+	var query2 = document.getElementById("query2").value;
+	console.log("url: "+url+"\nquery1: "+query1+"\nquery2: "+query2);
+
+	//Script qui interroge 2 fois la google Spreadsheet et affiche le résultat graphiquement.
+	google.charts.setOnLoadCallback(
+		function() {
+			//envoie la 1e requete url+query1 a Google
+			sendQuery(url, query1, function(response) {
+
+				//extrait une DataTable declaree globale de la 1e reponse recue.
+				dataQuery1 = extractDataTableFromAnswer(response);
+
+				//envoie la 2e requete url+query2 a Google
+				sendQuery(url, query2, function(response) {
+
+					//extrait une DataTable declaree globale de la 2e reponse recue.
+					dataQuery2 = extractDataTableFromAnswer(response);
+
+					//fusionne les deux tables avec Join
+					var data = google.visualization.data.join(dataQuery1, dataQuery2, 'inner', [[1,1], [2,2]], [3], [3]);
+					console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
+
+					//genere les graphiques Google Charts et les affiche
+					drawChart(data);
+				});
+			}); 
+		}
+	);
+}
