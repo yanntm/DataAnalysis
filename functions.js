@@ -152,9 +152,10 @@ function drawChart(data) {
 	//affichage graphique du ScatterChart
 	chart.draw(view, options);
 }
-function drawChrono() {
 
-      var data = new google.visualization.DataTable();
+google.charts.setOnLoadCallback(drawChrono);
+function drawChrono() {
+      var data = new google.visualization.DataTable(document.getElementById('chrono_div'));
       data.addColumn('number', 'Date');
       data.addColumn('number', 'CTLFireability');
       data.addColumn('number', 'LTLCardinality');
@@ -181,8 +182,8 @@ function drawChrono() {
           title: 'Chronogramme de la Technique ITS',
           subtitle: 'Pour un model donne et les examinations disponibles'
         },
-        width: 700,
-        height: 400
+        width: 600,
+        height: 300
       };
 
       var chart = new google.charts.Line(document.getElementById('chrono_div'));

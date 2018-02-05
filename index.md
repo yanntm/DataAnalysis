@@ -33,26 +33,21 @@
     <input type="checkbox" id="removeFailed" />
 		<br />
 		<!--bouton pour lancer la recherche-->
-		<input type="button" value="Go" onclick="startQuerying()" />
-		<input type="button" value="chronogramme" onclick="startChrono()" />
+		<input type="button" value="Go" onclick="startQuerying()" /> <br />
+		<input type="button" value="chronogramme" onclick="drawChrono()" />
 	</form>
 
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->
-	<div id="table_div" style="width: 600px; height: 200px;"></div>
-	<div id="chart_div" style="width: 600px; height: 500px;"></div>
-<<<<<<< HEAD
-    <!-- div pour le chorngramme! >
-=======
-	<div id="chrono_div" style="width: 600px; height: 500px;"></div>
->>>>>>> 0a0d34f922b31ca5f6ef802a19e497bbdc2e1419
-
+	<div id="table_div" style="width: 600px; height: 200px; border : 1px #000 solid;"></div>
+	<div id="chart_div" style="width: 600px; height: 500px; border : 1px #000 solid;"></div>
+	<div id="chrono_div" style="width: 600px; height: 300px; border : 1px #000 solid;"></div>
+	
 	<!--chargement du loader de lib google charts (+ajax)-->
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<!--chargement de la lib google charts-->
 	<script type="text/javascript">google.charts.load('current', {'packages':['corechart','table']});</script>
 	<script type="text/javascript">
 		google.charts.load('current', {'packages':['line']});
-		google.charts.setOnLoadCallback(drawChrono);
     </script>
 	<!--chargement des fonctions custom JS-->
 	<script type="text/javascript" src="functions.js"></script>
