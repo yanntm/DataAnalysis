@@ -12,7 +12,7 @@
     <label for="comparedType">comparer sur</label>
     <select id="comparedType">
 	  	<option value="duration" selected="selected">duration(ms)</option>
-		</select>
+	</select>
     <br />
 		<!--technique en abscisse dans le graphe-->
     <label for="techX">technique en abscisse</label>
@@ -39,6 +39,7 @@
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->
 	<div id="table_div" style="width: 600px; height: 200px;"></div>
 	<div id="chart_div" style="width: 600px; height: 500px;"></div>
+    <!-- div pour le chorngramme! >
 
 	<!--chargement du loader de lib google charts (+ajax)-->
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
