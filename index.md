@@ -48,7 +48,7 @@
 	<script type="text/javascript">google.charts.load('current', {'packages':['corechart','table']});</script>
 	<script type="text/javascript">
 		google.charts.load('current', {'packages':['line']});
-		google.charts.setOnLoadCallback(drawChart);
+		google.charts.setOnLoadCallback(drawChrono);
     </script>
 	<!--chargement des fonctions custom JS-->
 	<script type="text/javascript" src="functions.js"></script>
