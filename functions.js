@@ -8,23 +8,26 @@ var removeFailed;
 var query1;
 var query2;
 
+//objet tableau d'association : 
+//	col.[nomDeColonne][0] = columnID, 
+//	col.[nomDeColonne][1] = columnIndex
 var col = {
-		'log': 'A',
-		'model': 'B',
-		'examination': 'C',
-		'technique': 'D',
-		'testStarted': 'E',
-		'testFail': 'F',
-		'testFinished': 'G',
-		'duration': 'H',
-		'initial': 'I',
-		'tautology': 'J',
-		'ITS': 'K',
-		'BMC': 'L',
-		'induction': 'M',
-		'PINS': 'N',
-		'PINSPOR': 'O',
-		'version': 'P'
+		'log': ['A',0],
+		'model': ['B',1],
+		'examination': ['C',2],
+		'technique': ['D',3],
+		'testStarted': ['E',4],
+		'testFail': ['F',5],
+		'testFinished': ['G',6],
+		'duration': ['H',7],
+		'initial': ['I',8],
+		'tautology': ['J',9],
+		'ITS': ['K',10],
+		'BMC': ['L',11],
+		'induction': ['M',12],
+		'PINS': ['N',13],
+		'PINSPOR': ['O',14],
+		'version': ['P',15]
 };
 
 function startQuerying() {
@@ -55,9 +58,15 @@ function startQuerying() {
 					dataQuery2 = extractDataTableFromAnswer(response);
 
 					//fusionne les deux tables avec Join
-					var data = google.visualization.data.join(dataQuery1, dataQuery2, 'inner', [[1,1], [2,2]], [3], [3]);
+					var data = google.visualization.data.join(
+						dataQuery1, 
+						dataQuery2, 
+						'inner', 
+						[[col.model[1], col.model[1]], [col.examination[1], col.examination[1]]],
+						[col.duration[1]], [col.duration[1]]);
+					
 					console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
-
+					
 					//genere les graphiques Google Charts et les affiche
 					drawChart(data);
 				});
@@ -79,18 +88,16 @@ function createQuery(techniqueName){
 	var query;
 
 	//clause SELECT : colonnes log, model, examination, [comparedType]
-	query = 'SELECT '+col.log+', '+col.model+', '+col.examination+', ';
-	query += col[comparedType];
-
+	query = 'SELECT *';
 	//clause WHERE : technique = [techniqueName] AND (optionnel) testFail = 0
-	query += ' WHERE '+col.technique+' ="'+techniqueName+'"';
+	query += ' WHERE '+col.technique[0]+' ="'+techniqueName+'"';
 	
 	if(removeFailed){
-		query += ' AND '+col.testFail+' = 0';
+		query += ' AND '+col.testFail[0]+' = 0';
 	}
 
 	//clause LABEL : colonne comparedType renomme en "techniqueName comparedType"
-	query += ' LABEL '+col[comparedType]+' "'+techniqueName+' '+comparedType+'"';
+	query += ' LABEL '+col[comparedType][0]+' "'+techniqueName+' '+comparedType+'"';
 
 	return query;
 }
@@ -127,27 +134,42 @@ function drawChart(data) {
 	/*AFFICHAGE SCATTERCHART*/
 
 	var view = new google.visualization.DataView(data);
-	view.setColumns([2, 3, {
-		label: 'y=x',
-		type: 'number',
-		calc: function (dt, row) {return dt.getValue(row, 2);}
-	}]);
+	view.setColumns([2, 3, 
+		{
+			label: 'y=x',
+			type: 'number',
+			calc: function (dt, row) {return dt.getValue(row, 2);}
+		}
+	]);
 
 	//Configuration du schema
 	var options = {
-			title: '[-its] VS [-its -smt -ltsminpath] Durations',
-			hAxis: {title: '-its'},
-			vAxis: {title: '-its -smt -ltsminpath'},
+			title: '['+techX+'] VS ['+techY+'] '+comparedType,
+			hAxis: {title: techX},
+			vAxis: {title: techY},
 			
 			seriesType: 'scatter',
 			series: {
 				1: {type: 'line'}
-			}
+			},
+
+			tooltip: { trigger: 'both' }
 	};
 	
 	//creation du ScatterChart. On passe en parametre un pointeur vers l'element DOM
 	//dans lequel le ScatterChart sera encapsule dans le fichier HTML.
 	var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+
+	chart.setAction({
+		id: 'details',
+		text: '[details]',
+		action: function() {
+			selection = chart.getSelection();
+			//switch (selection[0].row) {
+			//}
+			alert('You have triggered an alert');
+		}
+	});
 
 	//affichage graphique du ScatterChart
 	chart.draw(view, options);
@@ -155,38 +177,38 @@ function drawChart(data) {
 
 google.charts.setOnLoadCallback(drawChrono);
 function drawChrono() {
-      var data = new google.visualization.DataTable(document.getElementById('chrono_div'));
-      data.addColumn('number', 'Date');
-      data.addColumn('number', 'CTLFireability');
-      data.addColumn('number', 'LTLCardinality');
-      data.addColumn('number', 'ReachabilityDeadlock');
-      data.addColumn('number', 'ReachabilityFireability');
+	  var data = new google.visualization.DataTable(document.getElementById('chrono_div'));
+	  data.addColumn('number', 'Date');
+	  data.addColumn('number', 'CTLFireability');
+	  data.addColumn('number', 'LTLCardinality');
+	  data.addColumn('number', 'ReachabilityDeadlock');
+	  data.addColumn('number', 'ReachabilityFireability');
 
-      data.addRows([
-        [1,  37.8, 80.8, 41.8, 50.9],
-        [2,  30.9, 69.5, 32.4, 47.5],
-        [3,  25.4,   57, 25.7, 68.8],
-        [4,  11.7, 18.8, 10.5, 25.5],
-        [5,  11.9, 17.6, 10.4, 78.9],
-        [6,   8.8, 13.6,  7.7, 18.9],
-        [7,  32.8, 75.8, 36.8, 45.9],
-        [8,  25.9, 64.5, 27.4, 42.5],
-        [9,  20.4,   52, 20.7, 63.8],
-        [10,  6.7, 13.8, 5.5, 20.5],
-        [11,  6.9, 12.6, 5.4, 73.9],
-        [12,   3.8, 8.6,  2.7, 13.9]
-      ]);
+	  data.addRows([
+		[1,  37.8, 80.8, 41.8, 50.9],
+		[2,  30.9, 69.5, 32.4, 47.5],
+		[3,  25.4,   57, 25.7, 68.8],
+		[4,  11.7, 18.8, 10.5, 25.5],
+		[5,  11.9, 17.6, 10.4, 78.9],
+		[6,   8.8, 13.6,  7.7, 18.9],
+		[7,  32.8, 75.8, 36.8, 45.9],
+		[8,  25.9, 64.5, 27.4, 42.5],
+		[9,   20.4,   52, 20.7, 63.8],
+		[10,  6.7, 13.8, 5.5, 20.5],
+		[11,  6.9, 12.6, 5.4, 73.9],
+		[12,   3.8, 8.6,  2.7, 13.9]
+	  ]);
 
-      var options = {
-        chart: {
-          title: 'Chronogramme de la Technique ITS',
-          subtitle: 'Pour un model donne et les examinations disponibles'
-        },
-        width: 600,
-        height: 300
-      };
+	  var options = {
+		chart: {
+		  title: 'Chronogramme de la Technique ITS',
+		  subtitle: 'Pour un model donne et les examinations disponibles'
+		},
+		width: 600,
+		height: 300
+	  };
 
-      var chart = new google.charts.Line(document.getElementById('chrono_div'));
+	  var chart = new google.charts.Line(document.getElementById('chrono_div'));
 
-      chart.draw(data, google.charts.Line.convertOptions(options));
+	  chart.draw(data, google.charts.Line.convertOptions(options));
 }
