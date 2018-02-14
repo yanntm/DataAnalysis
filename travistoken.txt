@@ -1,0 +1,64 @@
+//yanntm token :
+/*REMOVED*/
+
+
+//vincenthavinh token :
+/*REMOVED*/
+
+
+
+//EXEMPLE curl 
+
+curl -H "Travis-API-Version: 3" \
+  -H "Accept: text/plain" \
+  -H "Authorization: token REMOVED" \
+  https://api.travis-ci.org/job/334785634/log
+
+
+
+//slug à mettre dans l'url de query: 
+yanntm%2FITS-Tools-pnmcc
+
+//REMARQUES:
+//> attention à mettre api.travis-ci.ORG dans l'url, et non .COM sinon -> access denied 
+//> le slug est le nom unique d'un repo. il est égal a : {user.name}%2F{repo.name} ou %2F est un / échappé 
+
+
+/*QUERY LES BUILDS DU NUMBER i A j*/
+
+/*_____________________________________________________________________________________________________________________
+NOTABENE : 
+?sort_by=id pour trier selon l'id. asc ou desc ( rien pour ascendant / ajouter :desc après id pour trier en desc)
+	(semble être trié par défaut du plus récent au plus ancien <=> ordre desc id)
+?limit=2 pour retourner une liste de deux builds max
+?offset=530 pour afficher les builds à partir du 531e build retourné en résultat inclus.
+	(<=> enlever les 530 premiers résultats de la réponse)
+>sort_by est appliqué avant offset, quel que soit l'ordre dans l'url de query.
+>ne pas oublier les " " autour de l'url, sinon bash tronque au premier & trouvé (& = exec parallèle en bash)
+si sort_by=id:desc, retourne la liste de builds de number [8,7]
+si sort_by=id, retourne la liste de builds de number [531, 532]
+_____________________________________________________________________________________________________________________*/
+
+
+curl -H "Travis-API-Version: 3" \
+	-H "User-Agent: API Explorer" \
+	-H "Authorization: token REMOVED" \
+	"https://api.travis-ci.org/repo/yanntm%2FITS-Tools-pnmcc/builds?sort_by=id&limit=2&offset=530"
+
+
+//REMARQUES:
+//>Les headers sont-ils vraiment nécessaires ? la requête suivante renvoie le même résultat... (seul le header API version
+//a du être transformé en /v3/ dans l'url) 
+
+
+curl "https://api.travis-ci.org/v3/repo/yanntm%2FITS-Tools-pnmcc/builds?sort_by=id&limit=2&offset=530"
+
+
+
+/*GREP SUR l'id D'UN BUILD*/
+
+//grep ne fonctionne pas pour un regex sur plusieurs lignes : "\"@type\": \"build\".*\"id\":" ne fonctionnera pas car .* 
+// ne prendra pas en compte le cas où plusieurs lignes séparent les dexu parties de la regex.
+//-> solution : utiliser pcgrep, sed, awk ou alors ecrire le script en perl au lieu de bash et y inclure le parsing directement.
+
+
