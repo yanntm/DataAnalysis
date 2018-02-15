@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cd ./travisLogs
-ls
 
 let length=$2-$1+1
 let skipped=$1-1
@@ -25,6 +24,5 @@ do
 	done
 done
 
-
-#	wget https://api.travis-ci.org/v3/job/job_id/log.txt
-
+./logs2csv.pl log$job_id.txt > csv$1-$2.txt
+rm log*.txt

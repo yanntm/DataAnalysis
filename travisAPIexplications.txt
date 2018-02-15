@@ -54,11 +54,21 @@ curl -H "Travis-API-Version: 3" \
 curl "https://api.travis-ci.org/v3/repo/yanntm%2FITS-Tools-pnmcc/builds?sort_by=id&limit=2&offset=530"
 
 
-
-/*GREP SUR l'id D'UN BUILD*/
-
-//grep ne fonctionne pas pour un regex sur plusieurs lignes : "\"@type\": \"build\".*\"id\":" ne fonctionnera pas car .* 
-// ne prendra pas en compte le cas où plusieurs lignes séparent les dexu parties de la regex.
-//-> solution : utiliser pcgrep, sed, awk ou alors ecrire le script en perl au lieu de bash et y inclure le parsing directement.
+______________________________________________________________________
 
 
+//REMARQUES SUR logs.sh
+
+//> utilisation de la commande jq (à sudo apt-get installer)
+
+//> il semble qu'on ne puisse pas récupérer plus de 100 json builds avec une seule requete à l'API.
+
+//> faut-il curl XX/log.txt > logXX.txt et lancer le script perl sur le dossier de logs
+//> ou pipe l'output de curl sur le script de parsing perl. (éviter plusieurs écritures/lectures mém ?)
+
+//> faut-il détecter les logs des jobs canceled et ne pas les downloader
+//> de même pour les jobs errored
+
+//> version des logs correspondant a la date du jar :
+//> eclipse/plugins/fr.lip6.move.gal.application.pnmcc_1.0.0.201802092155.jar
+//> id des logs uniques, mais toujours croissants ? et pas toujours consécutifs (55 -> 57 pour 533)
