@@ -76,7 +76,8 @@ function startQuerying() {
 }
 
 function extractClientSettings(){
-	url = document.getElementById("url").value;
+	url = "https://docs.google.com/spreadsheets/d/"+
+	document.getElementById("url").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 	removeFailed = document.getElementById("removeFailed").checked;
 	techX = document.getElementById("techX").value;
 	techY = document.getElementById("techY").value;
@@ -167,7 +168,7 @@ function drawChart(data) {
 			selection = chart.getSelection();
 			//switch (selection[0].row) {
 			//}
-			alert('You have triggered an alert');
+			alert(selection);
 		}
 	});
 

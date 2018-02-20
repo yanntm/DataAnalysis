@@ -24,5 +24,5 @@ do
 	done
 done
 
-./logs2csv.pl log$job_id.txt > csv$1-$2.txt
+./logs2csv.pl log$job_id.txt > csv$1-$2.csv
 rm log*.txt

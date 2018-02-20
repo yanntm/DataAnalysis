@@ -1,13 +1,6 @@
-//yanntm token :
-/*REMOVED*/
+REMARQUES GET FROM API TRAVIS
 
-
-//vincenthavinh token :
-/*REMOVED*/
-
-
-
-//EXEMPLE curl 
+//exemple curl 
 
 curl -H "Travis-API-Version: 3" \
   -H "Accept: text/plain" \
@@ -19,9 +12,9 @@ curl -H "Travis-API-Version: 3" \
 //slug à mettre dans l'url de query: 
 yanntm%2FITS-Tools-pnmcc
 
-//REMARQUES:
-//> attention à mettre api.travis-ci.ORG dans l'url, et non .COM sinon -> access denied 
-//> le slug est le nom unique d'un repo. il est égal a : {user.name}%2F{repo.name} ou %2F est un / échappé 
+//remarques:
+> attention à mettre api.travis-ci.ORG dans l'url, et non .COM sinon -> access denied 
+> le slug est le nom unique d'un repo. il est égal a : {user.name}%2F{repo.name} ou %2F est un / échappé 
 
 
 /*QUERY LES BUILDS DU NUMBER i A j*/
@@ -46,9 +39,9 @@ curl -H "Travis-API-Version: 3" \
 	"https://api.travis-ci.org/repo/yanntm%2FITS-Tools-pnmcc/builds?sort_by=id&limit=2&offset=530"
 
 
-//REMARQUES:
-//>Les headers sont-ils vraiment nécessaires ? la requête suivante renvoie le même résultat... (seul le header API version
-//a du être transformé en /v3/ dans l'url) 
+//remarques:
+>Les headers sont-ils vraiment nécessaires ? la requête suivante renvoie le même résultat... (seul le header API version
+>a du être transformé en /v3/ dans l'url) 
 
 
 curl "https://api.travis-ci.org/v3/repo/yanntm%2FITS-Tools-pnmcc/builds?sort_by=id&limit=2&offset=530"
@@ -57,18 +50,23 @@ curl "https://api.travis-ci.org/v3/repo/yanntm%2FITS-Tools-pnmcc/builds?sort_by=
 ______________________________________________________________________
 
 
-//REMARQUES SUR logs.sh
+//remarques sur logs.sh
 
-//> utilisation de la commande jq (à sudo apt-get installer)
+> utilisation de la commande jq (à sudo apt-get installer)
 
-//> il semble qu'on ne puisse pas récupérer plus de 100 json builds avec une seule requete à l'API.
+> il semble qu'on ne puisse pas récupérer plus de 100 json builds avec une seule requete à l'API.
 
-//> faut-il curl XX/log.txt > logXX.txt et lancer le script perl sur le dossier de logs
-//> ou pipe l'output de curl sur le script de parsing perl. (éviter plusieurs écritures/lectures mém ?)
+> faut-il détecter les logs des jobs canceled et ne pas les downloader
+> de même pour les jobs errored : NON tout garder
 
-//> faut-il détecter les logs des jobs canceled et ne pas les downloader
-//> de même pour les jobs errored
+> version des logs correspondant a la date du jar :
+> eclipse/plugins/fr.lip6.move.gal.application.pnmcc_1.0.0.201802092155.jar
+>id des logs uniques, mais toujours croissants ? et pas toujours consécutifs (55 -> 57 pour 533)
 
-//> version des logs correspondant a la date du jar :
-//> eclipse/plugins/fr.lip6.move.gal.application.pnmcc_1.0.0.201802092155.jar
-//> id des logs uniques, mais toujours croissants ? et pas toujours consécutifs (55 -> 57 pour 533)
+
+
+
+REMARQUES FICHIER csv401-500.csv
+>certains lignes ont des cases vides,
+>le build 314771443, 485.6, log ligne 1164 : il manque un tiret dans le nom du model, et
+>l'examination s'appelle : ReachabilityFireabilitinished 

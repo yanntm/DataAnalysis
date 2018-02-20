@@ -6,8 +6,8 @@
 	<!--formulaire de configuration-->
 	<form name="formulaireAjout">
 		<!--URL-->
-		<label for="url">URL :</label>
-		<input type="text" id="url" placeholder="URL" value='https://docs.google.com/spreadsheets/d/1ZdhTerwqhyGxmSyCpfmQGeCHynFL2gcbC-PJ56NzXrE/gviz/tq?sheet=Sheet1&headers=1&tq=' />
+		<label for="url">Spreadsheet Key :</label>
+		<input type="text" id="url" placeholder="Spreadsheet Key" value='1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco' />
 		<br />
 		<!--type de la comparaison-->
 		<label for="comparedType">comparer sur</label>
@@ -18,15 +18,19 @@
 		<!--technique en abscisse dans le graphe-->
 		<label for="techX">technique en abscisse :</label>
 		<select id="techX">
-			<option value="-its" selected="selected">-its</option>
+			<option value="-its">-its</option>
+			<option value="-ltsminpath" selected="selected">-ltsminpath</option>
 			<option value="-its -smt -ltsminpath">-its -smt -ltsminpath</option>
+			<option value="-ltsminpath -its -smt">-ltsminpath -its -smt</option>
 		</select>
 		<br />
 		<!--technique en ordonnee dans le graphe-->
 		<label for="techY">technique en ordonnée :</label>
 		<select id="techY">
 			<option value="-its">-its</option>
-			<option value="-its -smt -ltsminpath" selected="selected">-its -smt -ltsminpath</option>
+			<option value="-ltsminpath">-ltsminpath</option>
+			<option value="-its -smt -ltsminpath">-its -smt -ltsminpath</option>
+			<option value="-ltsminpath -its -smt" selected="selected">-ltsminpath -its -smt</option>
 		</select>
 		<br />
 		<!--booleen pour enlever les tests failed-->
