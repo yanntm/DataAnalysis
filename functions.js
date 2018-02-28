@@ -176,40 +176,30 @@ function drawChart(data) {
 	chart.draw(view, options);
 }
 
-google.charts.setOnLoadCallback(drawChrono);
+// traitement du chronogramme
+
 function drawChrono() {
-	  var data = new google.visualization.DataTable(document.getElementById('chrono_div'));
-	  data.addColumn('number', 'Date');
-	  data.addColumn('number', 'CTLFireability');
-	  data.addColumn('number', 'LTLCardinality');
-	  data.addColumn('number', 'ReachabilityDeadlock');
-	  data.addColumn('number', 'ReachabilityFireability');
+	 var queryStr = encodeURIComponent('SELECT P,H WHERE D= \'-ltsminpath\' and C = \'ReachabilityDeadlock\' ');
 
-	  data.addRows([
-		[1,  37.8, 80.8, 41.8, 50.9],
-		[2,  30.9, 69.5, 32.4, 47.5],
-		[3,  25.4,   57, 25.7, 68.8],
-		[4,  11.7, 18.8, 10.5, 25.5],
-		[5,  11.9, 17.6, 10.4, 78.9],
-		[6,   8.8, 13.6,  7.7, 18.9],
-		[7,  32.8, 75.8, 36.8, 45.9],
-		[8,  25.9, 64.5, 27.4, 42.5],
-		[9,   20.4,   52, 20.7, 63.8],
-		[10,  6.7, 13.8, 5.5, 20.5],
-		[11,  6.9, 12.6, 5.4, 73.9],
-		[12,   3.8, 8.6,  2.7, 13.9]
-	  ]);
+     var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryStr);
+     query.send(handlerDataQueryResponse);
 
-	  var options = {
+} 
+function handlerDataQueryResponse(response) {
+      if (response.isError()) {
+        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+        return;
+      }
+
+      var options = {
 		chart: {
-		  title: 'Chronogramme de la Technique ITS',
+		  title: 'Chronogramme de la Technique ITSMINPATH',
 		  subtitle: 'Pour un model donne et les examinations disponibles'
 		},
 		width: 600,
 		height: 300
 	  };
-
+	  var data = response.getDataTable();
 	  var chart = new google.charts.Line(document.getElementById('chrono_div'));
-
 	  chart.draw(data, google.charts.Line.convertOptions(options));
 }
