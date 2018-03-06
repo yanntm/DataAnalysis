@@ -6,8 +6,14 @@
 	<!--formulaire de configuration-->
 	<form name="formulaireAjout">
 		<!--URL-->
-		<label for="url">Spreadsheet Key :</label>
-		<input type="text" id="url" placeholder="Spreadsheet Key" value='1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco' />
+		<label for="url">Spreadsheet à analyser :</label>
+		<select id="url">
+			<option value="1ZLSqWxT4YT8zhg84WeoeGjCxDbuOWO_BVvS9J3IBKgo">csv001-100</option>
+			<option value="1k1vyrsKs8A8aXDs4HkwkgHPCWvW-41h_F6PS93GHjbo">csv101-200</option>
+			<option value="1MCmsdKAIQKuC9amV3V2XeKL6GpCxNG5aeU0byjt8agg">csv201-300</option>
+			<option value="1FxiAz3-yENo_WQyM9_g8m9r_7BTYlu1Isqe5iuWcPUo">csv301-400</option>
+			<option value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" selected="selected">csv401-500</option>
+		</select>
 		<br />
 		<!--type de la comparaison-->
 		<label for="comparedType">comparer sur</label>

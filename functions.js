@@ -179,7 +179,7 @@ function drawChart(data) {
 // traitement du chronogramme
 
 function drawChrono() {
-	 var queryStr = encodeURIComponent('SELECT P,H WHERE D= \'-ltsminpath\' and C = \'ReachabilityDeadlock\' ');
+	 var queryStr = encodeURIComponent('SELECT A,H WHERE B matches \'.*Airplane.*\' and D= \'-ltsminpath\' and F=0 and C = \'ReachabilityDeadlock\' ORDER BY A');
 
      var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryStr);
      query.send(handlerDataQueryResponse);
@@ -200,6 +200,7 @@ function handlerDataQueryResponse(response) {
 		height: 300
 	  };
 	  var data = response.getDataTable();
-	  var chart = new google.charts.Line(document.getElementById('chrono_div'));
-	  chart.draw(data, google.charts.Line.convertOptions(options));
+	  var view = new google.visualization.DataView(data);
+	  var chart = new google.visualization.ColumnChart(document.getElementById("chrono_div"));
+	  chart.draw(view, options);
 }
