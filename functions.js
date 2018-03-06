@@ -43,36 +43,40 @@ function startQuerying() {
 		"\ntechY: "+techY+"\nremoveFailed: "+removeFailed+"\nquery1: "+query1+"\nquery2: "+query2);
 
 	//Script qui interroge 2 fois la google Spreadsheet et affiche le résultat graphiquement.
-	google.charts.setOnLoadCallback(
-		function() {
-			//envoie la 1e requete url+query1 a Google
-			sendQuery(url, query1, function(response) {
+	google.charts.setOnLoadCallback(mainExecution);
+	function mainExecution(){
 
-				//extrait une DataTable declaree globale de la 1e reponse recue.
-				dataQuery1 = extractDataTableFromAnswer(response);
+		//envoie la 1e requete url+query1 a Google
+		sendQuery(url, query1, onReceiveQuery1);
 
-				//envoie la 2e requete url+query2 a Google
-				sendQuery(url, query2, function(response) {
+		function onReceiveQuery1(response) {
 
-					//extrait une DataTable declaree globale de la 2e reponse recue.
-					dataQuery2 = extractDataTableFromAnswer(response);
+			//extrait une DataTable declaree globale de la 1e reponse recue.
+			dataQuery1 = extractDataTableFromAnswer(response);
 
-					//fusionne les deux tables avec Join
-					var data = google.visualization.data.join(
-						dataQuery1, 
-						dataQuery2, 
-						'inner', 
-						[[col.model[1], col.model[1]], [col.examination[1], col.examination[1]]],
-						[col.duration[1]], [col.duration[1]]);
-					
-					console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
-					
-					//genere les graphiques Google Charts et les affiche
-					drawChart(data);
-				});
-			}); 
+			//envoie la 2e requete url+query2 a Google
+			sendQuery(url, query2, onReceiveQuery2);
 		}
-	);
+
+		function onReceiveQuery2(response) {
+
+			//extrait une DataTable declaree globale de la 2e reponse recue.
+			dataQuery2 = extractDataTableFromAnswer(response);
+
+			//fusionne les deux tables avec Join
+			var data = google.visualization.data.join(
+				dataQuery1, 
+				dataQuery2, 
+				'inner', 
+				[[col.model[1], col.model[1]], [col.examination[1], col.examination[1]]],
+				[col.duration[1]], [col.duration[1]]);
+			
+			console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
+			
+			//genere les graphiques Google Charts et les affiche
+			drawScatterPlot(data);
+		}
+	}
 }
 
 function extractClientSettings(){
@@ -120,16 +124,16 @@ function extractDataTableFromAnswer(queryResponse) {
 	return queryResponse.getDataTable();
 }
 
-function drawChart(data) {
+function drawScatterPlot(data) {
 
 	/*AFFICHAGE DATATABLE*/
 
 	//creation de la Table. On passe en parametre un pointeur vers l'element DOM
 	//dans lequel la Table sera encapsulee dans le fichier HTML.
-	var table = new google.visualization.Table(document.getElementById('table_div'));
+	//var table = new google.visualization.Table(document.getElementById('table_div'));
 
 	//affichage graphique de la table de donnees recue en reponse
-	table.draw(data, {showRowNumber : true});
+	//table.draw(data, {showRowNumber : true});
 
 
 	/*AFFICHAGE SCATTERCHART*/
@@ -201,6 +205,6 @@ function handlerDataQueryResponse(response) {
 	  };
 	  var data = response.getDataTable();
 	  var view = new google.visualization.DataView(data);
-	  var chart = new google.visualization.ColumnChart(document.getElementById("chrono_div"));
+	  var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
 	  chart.draw(view, options);
 }
