@@ -15,6 +15,12 @@
 			<option value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" selected="selected">csv401-500</option>
 		</select>
 		<br />
+		<!--plage de builds-->
+		<label for="fromBuild">Builds : de </label>
+		<input type="text" id="fromBuild" placeholder="401" value="401" />
+		<label for="toBuild"> jusqu'à </label>
+		<input type="text" id="toBuild" placeholder="500" value="500" />
+		<br />
 		<!--type de la comparaison-->
 		<label for="comparedType">comparer sur</label>
 		<select id="comparedType">
@@ -44,7 +50,7 @@
 		<input type="checkbox" id="removeFailed" />
 		<br />
 		<!--bouton pour lancer la recherche-->
-		<input type="button" value="Go" onclick="startQuerying()" /> <br />
+		<input type="button" value="Go" onclick="startQueryingScatterPlot()" /> <br />
 		<input type="button" value="chronogramme" onclick="drawChrono()" />
 	</form>
 
