@@ -196,14 +196,89 @@ function drawScatterPlot(data) {
 }
 
 // traitement du chronogramme
+// B matches \'.*Airplane.*\'
 
+function drawChronoAffiche(){
+	google.charts.setOnLoadCallback(donneesChrono);
+
+	function donneesChrono(){
+
+		/*var model1;
+		var model2;
+
+		if(AirplaneLD){
+			model1 = document.getElementById("AirplaneLD").value;
+		}
+
+		if(Angiogenesis){
+			model1 = document.getElementById("Angiogenesis").value;
+		}
+
+		if(AutoFlight){
+			model1 = document.getElementById("AutoFlight").value;
+		} */
+
+		var url1 = "https://docs.google.com/spreadsheets/d/1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco/gviz/tq?sheet=Sheet1&headers=1&tq=";
+		var queryStr1 = "SELECT C,H WHERE B matches \'.*Angiogenesis.*\'  and D= \'-ltsminpath\' and F=0 LIMIT 100";
+		var queryStr2 = "SELECT C,H WHERE B matches \'.*Airplane.*\'  and D= \'-ltsminpath\' and F=0 LIMIT 100 ";
+		sendQuery(url1,queryStr1,RecevoirQueryStr1);
+
+		function RecevoirQueryStr1(reponse){
+			dataStr1 = extractDataTableFromAnswer(reponse);
+			sendQuery(url1,queryStr2,RecevoirQueryStr2);
+		}
+		function RecevoirQueryStr2(reponse){
+			dataStr2 = extractDataTableFromAnswer(reponse);
+			var data = google.visualization.data.join(
+				dataStr1, 
+				dataStr2, 
+				'inner',
+				[[0,0]],[1],[1]
+				);
+			//drawChrono(data);
+			var options = {
+				chart: {
+		  			title: 'Chronogramme de la Technique ITSMINPATH',
+		  			subtitle: 'Pour un model donne et les examinations disponibles'
+				},
+				width: 600,
+				height: 300
+	  		};
+	  		var view = new google.visualization.DataView(data);
+	  		var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
+	  		chart.draw(view, options);
+		}
+
+	}
+}
+
+/*function drawChrono(data) {
+	var view = new google.visualization.DataView(data);
+
+	var options = {
+		chart: {
+		  title: 'Chronogramme de la Technique ITSMINPATH',
+		  subtitle: 'Pour un model donne et les examinations disponibles'
+		},
+		width: 600,
+		height: 300
+	  };
+	  //var data = response.getDataTable();
+	  //var view = new google.visualization.DataView(data);
+	  var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
+	  chart.draw(view, options);
+
+} 
 function drawChrono() {
-	 var queryStr = encodeURIComponent('SELECT A,H WHERE B matches \'.*Airplane.*\' and D= \'-ltsminpath\' and F=0 and C = \'ReachabilityDeadlock\'');
+	 var queryStr = encodeURIComponent('SELECT C,H WHERE B matches \'.*Angiogenesis.*\'  and D= \'-ltsminpath\' and F=0 and C = \'ReachabilityDeadlock\' LIMIT 50');
 
 	 var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryStr);
 	 query.send(handlerDataQueryResponse);
 
 } 
+
+
+
 function handlerDataQueryResponse(response) {
 	  if (response.isError()) {
 		alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
@@ -222,4 +297,4 @@ function handlerDataQueryResponse(response) {
 	  var view = new google.visualization.DataView(data);
 	  var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
 	  chart.draw(view, options);
-}
+}*/

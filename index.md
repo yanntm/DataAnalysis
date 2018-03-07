@@ -50,8 +50,13 @@
 		<input type="checkbox" id="removeFailed" />
 		<br />
 		<!--bouton pour lancer la recherche-->
-		<input type="button" value="Go" onclick="startQueryingScatterPlot()" /> <br />
-		<input type="button" value="chronogramme" onclick="drawChrono()" />
+		<input type="button" value="Go" onclick="startQueryingScatterPlot()" /> <br /><br />
+		<!-- les cases à cochées pour le chrono -->
+		<INPUT type="checkbox" name="AirplaneLD" value="AirplaneLD-PT-0010">AirplaneLD
+		<INPUT type="checkbox" name="Angiogenesis" value="Angiogenesis-PT-01"> Angiogenesis
+		<INPUT type="checkbox" name="AutoFlight" value="AutoFlight-PT-01a"> AutoFlight
+		<INPUT type="checkbox" name="BridgeAndVehicles" value="BridgeAndVehicles-COL-V04P05N02"> BridgeAndVehicles <br />
+		<input type="button" value="chronogramme" onclick="drawChronoAffiche()" />
 	</form>
 
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->
