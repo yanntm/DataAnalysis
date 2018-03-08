@@ -213,8 +213,8 @@ function drawChronoAffiche(){
 			BEqualOrRegexModel = "B=\'" +model+ "\'";
 		}
 
-		var queryStr1 = "SELECT A,avg(H) WHERE " +BEqualOrRegexModel+
-			" and C=\'" +examination+ "\' and F=0 GROUP BY A PIVOT D ORDER BY A";
+		var queryStr1 = "SELECT P,sum(H) WHERE " +BEqualOrRegexModel+
+			" and C=\'" +examination+ "\' and F=0 GROUP BY P PIVOT D ORDER BY P";
 
 		//var queryStr1 = "SELECT A,min(H) WHERE B matches \'.*" +model+ ".*\' " +
 		//	"and D=\'-ltsminpath -its -smt\'" + " and F=0 GROUP BY A PIVOT C ORDER BY A";
@@ -224,27 +224,39 @@ function drawChronoAffiche(){
 
 		function RecevoirQueryStr1(reponse){
 			data = extractDataTableFromAnswer(reponse);
-
 			console.log("numberOfRows :\ndata: " + data.getNumberOfRows());
 			
 
 			var options = {
 				chart: {
-		  			title: 'Chronogramme'
+					title: 'Chronogramme'
 				},
 				lineWidth: 1.5,
 				pointSize: 2,
 				interpolateNulls: true
-	  		};
+			};
 
-	  		var view = new google.visualization.DataView(data);
+			var view = new google.visualization.DataView(data);
 
-	  		var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
-	  		chart.draw(view, options);
+			var columns = [];
+			for (var i = 1; i <= view.getNumberOfColumns()-1; i++) {columns.push(i);}
+
+			var dateStringColumn = 
+				{
+            		type: 'string',
+            		calc: function (dt, row) {return dt.getFormattedValue(row, 0);}
+            	}
+
+            columns.unshift(dateStringColumn);
+
+			view.setColumns(columns);
+
+			var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
+			chart.draw(view, options);
 
 			//affichage graphique de la table de donnees 
-	  		var table = new google.visualization.Table(document.getElementById('table_div'));
-			table.draw(data, {showRowNumber : true});
+			var table = new google.visualization.Table(document.getElementById('table_div'));
+			table.draw(view, {showRowNumber : true});
 		}
 
 	}
