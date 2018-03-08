@@ -70,3 +70,29 @@ REMARQUES FICHIER csv401-500.csv
 >certains lignes ont des cases vides,
 >le build 314771443, 485.6, log ligne 1164 : il manque un tiret dans le nom du model, et
 >l'examination s'appelle : ReachabilityFireabilitinished 
+
+
+
+	
+chronogramme : 
+Relier les points entre eux ? (combler les valeurs NULL) Ou afficher en ColumnChart ?
+fonctions aggrégation oblligatoire sur la stat comparée ? mieux min ou max ?
+Pour un couple [model, examination] fixe -> afficher les perf des différentes techniques
+Pour un [model, technique] fixe -> afficher les perf pour les différentes évaluations.
+Un même build calcule rarement [model, examination] pour plusieurs techniques
+
+
+index : 
+un bloc par spreadsheet (infos premier et dernier build, techniques dedans, dates debut fin)
+|| un bloc par build (id & numéro de build (530, 607), finished_at (date), techniques pour chaque build ? (ou techniques pour le premier build qui la découvre ?))
+
+(légèreté d'index VS précision sur la fenêtre de calcul)
+
+doit il être une spreadsheet sur google ? peut-il être un "fichier de config" local au site web (économie des appels API, surcout mémoire et parsing local)
+
+Fonctionnement avec d'autres Spreadsheets que les builds du prof ? (autres groupes PSTL ?)
+
+Scatter chart :
+Moyen pour débroussailler le nuage ?
+peut être index avec liste assoc id/num build
+peut être fonction removePoint quand onclick/select sur le graphe (possible ?)

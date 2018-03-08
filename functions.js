@@ -1,18 +1,13 @@
 var url;
-var fromBuild;
-var toBuild;
+/*var fromBuild;
+var toBuild;*/
 
 var comparedType;
 var techX;
 var techY;
 var removeFailed;
 
-var query1;
-var query2;
-
 //objet tableau d'association : 
-//	col.[nomDeColonne][0] = columnID, 
-//	col.[nomDeColonne][1] = columnIndex
 var col = {
 		'log': 'A',
 		'model': 'B',
@@ -32,14 +27,14 @@ var col = {
 		'version': 'P'
 };
 
-function startQueryingScatterPlot() {
+function startScatterChart() {
 
 	//extraction des variables du formulaire HTML
 	extractClientSettings();
 
 	//creation des Queries selon les variables extraites
-	query1 = createQuery(techX);
-	query2 = createQuery(techY);
+	var query1 = createQueryScatterChart(techX);
+	var query2 = createQueryScatterChart(techY);
 
 	console.log("url: "+url+"\ncomparedType: "+comparedType+"\ntechX: "+techX+
 		"\ntechY: "+techY+"\nremoveFailed: "+removeFailed+"\nquery1: "+query1+"\nquery2: "+query2);
@@ -78,7 +73,7 @@ function startQueryingScatterPlot() {
 			console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
 			
 			//genere les graphiques Google Charts et les affiche
-			drawScatterPlot(data);
+			drawScatterChart(data);
 		}
 	}
 }
@@ -86,8 +81,8 @@ function startQueryingScatterPlot() {
 function extractClientSettings(){
 	url = "https://docs.google.com/spreadsheets/d/"+
 	document.getElementById("url").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
-	fromBuild = document.getElementById("fromBuild").value;
-	toBuild = document.getElementById("toBuild").value;
+	/*fromBuild = document.getElementById("fromBuild").value;
+	toBuild = document.getElementById("toBuild").value;*/
 	
 	removeFailed = document.getElementById("removeFailed").checked;
 	techX = document.getElementById("techX").value;
@@ -95,7 +90,7 @@ function extractClientSettings(){
 	comparedType = document.getElementById("comparedType").value;
 }
 
-function createQuery(techniqueName){
+function createQueryScatterChart(techniqueName){
 	//var locale pour construire la requete
 	var query;
 
@@ -131,7 +126,7 @@ function extractDataTableFromAnswer(queryResponse) {
 	return queryResponse.getDataTable();
 }
 
-function drawScatterPlot(data) {
+function drawScatterChart(data) {
 
 	/*AFFICHAGE DATATABLE*/
 
@@ -153,7 +148,7 @@ function drawScatterPlot(data) {
 			title: '['+techX+'] VS ['+techY+'] '+comparedType,
 			hAxis: {title: techX},
 			vAxis: {title: techY},
-			
+
 			seriesType: 'scatter',
 			series: {
 				1: {type: 'line'}
@@ -203,50 +198,53 @@ function drawChronoAffiche(){
 
 	function donneesChrono(){
 
-		/*var model1;
-		var model2;
+		var model = document.getElementById("model").value;
+		var examination = document.getElementById("examination").value;
+		var isRegex = document.getElementById("regex").checked;
 
-		if(AirplaneLD){
-			model1 = document.getElementById("AirplaneLD").value;
+		url = "https://docs.google.com/spreadsheets/d/"+
+		document.getElementById("url").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+		
+
+		var BEqualOrRegexModel;
+		if (isRegex) {
+			BEqualOrRegexModel = "B matches \'.*" +model+ ".*\'";
+		} else {
+			BEqualOrRegexModel = "B=\'" +model+ "\'";
 		}
 
-		if(Angiogenesis){
-			model1 = document.getElementById("Angiogenesis").value;
-		}
+		var queryStr1 = "SELECT A,avg(H) WHERE " +BEqualOrRegexModel+
+			" and C=\'" +examination+ "\' and F=0 GROUP BY A PIVOT D ORDER BY A";
 
-		if(AutoFlight){
-			model1 = document.getElementById("AutoFlight").value;
-		} */
-
-		var url1 = "https://docs.google.com/spreadsheets/d/1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco/gviz/tq?sheet=Sheet1&headers=1&tq=";
-		var queryStr1 = "SELECT C,H WHERE B matches \'.*Angiogenesis.*\'  and D= \'-ltsminpath\' and F=0 LIMIT 100";
-		var queryStr2 = "SELECT C,H WHERE B matches \'.*Airplane.*\'  and D= \'-ltsminpath\' and F=0 LIMIT 100 ";
-		sendQuery(url1,queryStr1,RecevoirQueryStr1);
+		//var queryStr1 = "SELECT A,min(H) WHERE B matches \'.*" +model+ ".*\' " +
+		//	"and D=\'-ltsminpath -its -smt\'" + " and F=0 GROUP BY A PIVOT C ORDER BY A";
+		
+		console.log(queryStr1);
+		sendQuery(url,queryStr1,RecevoirQueryStr1);
 
 		function RecevoirQueryStr1(reponse){
-			dataStr1 = extractDataTableFromAnswer(reponse);
-			sendQuery(url1,queryStr2,RecevoirQueryStr2);
-		}
-		function RecevoirQueryStr2(reponse){
-			dataStr2 = extractDataTableFromAnswer(reponse);
-			var data = google.visualization.data.join(
-				dataStr1, 
-				dataStr2, 
-				'inner',
-				[[0,0]],[1],[1]
-				);
-			//drawChrono(data);
+			data = extractDataTableFromAnswer(reponse);
+
+			console.log("numberOfRows :\ndata: " + data.getNumberOfRows());
+			
+
 			var options = {
 				chart: {
-		  			title: 'Chronogramme de la Technique ITSMINPATH',
-		  			subtitle: 'Pour un model donne et les examinations disponibles'
+		  			title: 'Chronogramme'
 				},
-				width: 600,
-				height: 300
+				lineWidth: 1.5,
+				pointSize: 2,
+				interpolateNulls: true
 	  		};
+
 	  		var view = new google.visualization.DataView(data);
+
 	  		var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
 	  		chart.draw(view, options);
+
+			//affichage graphique de la table de donnees 
+	  		var table = new google.visualization.Table(document.getElementById('table_div'));
+			table.draw(data, {showRowNumber : true});
 		}
 
 	}
