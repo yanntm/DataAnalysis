@@ -3,9 +3,11 @@
 <html>
 <body>
 
+	<input type="button" value="test a Query" onclick="window.open('./test.html')" />
+
 	<!--formulaire de configuration-->
 	<form name="formulaireAjout">
-		
+
 		<!--URL-->
 		<label for="url">Spreadsheet à analyser :</label>
 		<select id="url">
