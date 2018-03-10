@@ -1,10 +1,9 @@
 # Test de query sur google sheet
 
+[DIY test a Query](test.html){:target="_blank"}
+
 <html>
 <body>
-
-	<input type="button" value="test a Query" onclick="window.open('./test.html')" />
-
 	<!--formulaire de configuration-->
 	<form name="formulaireAjout">
 
