@@ -3,6 +3,7 @@
 
 <html>
 <body>
+	<select id="columns_names"></select>
 	<form>
 		<div>
 			<label for="key">key: </label>
@@ -10,9 +11,9 @@
 		</div>
 		<div>
 			<label for="select">SELECT </label>
-			<input type="text" id="select" placeholder=" *"/>
+			<input type="text" id="select" placeholder=" *" />
 			<label for="where">WHERE </label>
-			<input type="text" id="where" placeholder="no condition"/>
+			<input type="text" id="where" placeholder="no condition" />
 		</div>
 		<div>
 			<label for="groupby">GROUP BY </label>
@@ -30,9 +31,49 @@
 	</form>
 
 	<!--div ou s'affichera le graphe dataTable (javascript le generera)-->
-	<div id="table_div" style="width: 600px; height: 500px;" />
+	<div id="table_div" style="width: 600px; height: 500px;"></div>
 	
+
+	<!--chargement du loader de lib google charts (+ajax)
+		Doit etre dans une balise script separee avant les autres scripts
+		utilisant l'api google-->
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+	<!--script principal-->
 	<script>
+		google.charts.load('current', {'packages':['corechart','table']});
+		google.charts.setOnLoadCallback(retrieveColumnsNames);
+		
+		function retrieveColumnsNames(){
+			var query = "LIMIT 1";
+			var url = "https://docs.google.com/spreadsheets/d/"+
+				document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+
+			var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
+			queryEncoded.send(printColumnsNames);
+
+			function printColumnsNames(response){
+				if (response.isError()) {
+					alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+					return;
+				}
+
+				var data = response.getDataTable();
+
+				//var columnsMap = {};
+				var fragment = document.createDocumentFragment();
+
+				for(var i =0 ; i<data.getNumberOfColumns(); i++){
+					//columnsMap[data.getColumnLabel(i)] = data.getColumnId(i);
+					var opt = document.createElement('option');
+					opt.innerHTML = data.getColumnLabel(i);
+				    opt.value = data.getColumnId(i);
+				    fragment.appendChild(opt);
+				}
+
+				document.getElementById("columns_names").appendChild(fragment);
+			}
+		}
 
 		function testQuery() {
 			var key = document.getElementById("key").value;
@@ -76,12 +117,6 @@
 
 		}
 	</script>
-
-	<!--chargement du loader de lib google charts (+ajax)-->
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-	<!--chargement de la lib google charts-->
-	<script type="text/javascript">google.charts.load('current', {'packages':['corechart','table']});</script>
-
 
 </body>
 </html>
