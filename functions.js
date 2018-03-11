@@ -1,31 +1,9 @@
 var url;
-/*var fromBuild;
-var toBuild;*/
 
 var comparedType;
 var techX;
 var techY;
 var removeFailed;
-
-//objet tableau d'association : 
-var col = {
-		'log': 'A',
-		'model': 'B',
-		'examination': 'C',
-		'technique': 'D',
-		'testStarted': 'E',
-		'testFail': 'F',
-		'testFinished': 'G',
-		'duration': 'H',
-		'initial': 'I',
-		'tautology': 'J',
-		'ITS': 'K',
-		'BMC': 'L',
-		'induction': 'M',
-		'PINS': 'N',
-		'PINSPOR': 'O',
-		'version': 'P'
-};
 
 function startScatterChart() {
 
@@ -89,16 +67,13 @@ function createQueryScatterChart(techniqueName){
 	var query;
 
 	//clause SELECT : colonnes log, model, examination, [comparedType]
-	query = 'SELECT '+col.log+', '+col.model+', '+col.examination+', '+col[comparedType] ;
+	query = 'SELECT A, B, C, '+comparedType ;
 	//clause WHERE : technique = [techniqueName] AND (optionnel) testFail = 0
-	query += ' WHERE '+col.technique+' ="'+techniqueName+'"';
+	query += ' WHERE D ="'+techniqueName+'"';
 	
 	if(removeFailed){
-		query += ' AND '+col.testFail+' = 0';
+		query += ' AND F = 0';
 	}
-
-	//clause LABEL : colonne comparedType renomme en "techniqueName comparedType"
-	query += ' LABEL '+col[comparedType]+' "'+techniqueName+' '+comparedType+'"';
 
 	return query;
 }
@@ -112,12 +87,18 @@ function sendQuery(url, queryString, handleQueryResponse) {
 	queryEncoded.send(handleQueryResponse);
 }
 
-function extractDataTableFromAnswer(queryResponse) {
-	if (queryResponse.isError()) {
-		alert('Error in query: ' + queryResponse.getMessage() + ' ' + queryResponse.getDetailedMessage());
+function extractDataTableFromAnswer(response) {
+	/*response est un objet QueryResponse passee par la methode send.
+		https://developers.google.com/chart/interactive/docs/reference#methods_12*/
+
+	/*Erreur si requete fausse*/
+	if (response.isError()) {
+		alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
 		return;
 	}
-	return queryResponse.getDataTable();
+
+	/*donnees utiles dans l'objet QueryResponse*/
+	return response.getDataTable();
 }
 
 function drawScatterChart(data) {

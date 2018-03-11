@@ -4,9 +4,8 @@
 
 <html>
 <body>
-	<!--formulaire de configuration-->
-	<form name="formulaireAjout">
 
+	<div>
 		<!--URL-->
 		<label for="key">Spreadsheet à analyser :</label>
 		<select id="key">
@@ -16,9 +15,13 @@
 			<option value="1FxiAz3-yENo_WQyM9_g8m9r_7BTYlu1Isqe5iuWcPUo">csv301-400</option>
 			<option value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" selected>csv401-500</option>
 		</select>
+		<!--reload menu button-->
+		<input type="button" value="Load Menu" onclick="initialisation()" />
+	</div>
 		<br />
-		<br />
-		
+		<br />	
+	<!--formulaire de configuration-->
+	<form id="formConfig">
 		<!--plage de builds-
 		<label for="fromBuild">Builds : de </label>
 		<input type="text" id="fromBuild" placeholder="401" value="401" />
@@ -28,25 +31,17 @@
 		
 		<!--type de la comparaison-->
 		<label for="comparedType">comparer sur</label>
-		<select id="comparedType">
-			<option value="duration" selected>duration(ms)</option>
-		</select>
+		<select id="comparedType"></select>
 		<br />
 		
 		<!--technique en abscisse dans le graphe-->
 		<label for="techX">technique en abscisse :</label>
-		<select id="techX">
-			<option value="-ltsminpath" selected>-ltsminpath</option>
-			<option value="-ltsminpath -its -smt">-ltsminpath -its -smt</option>
-		</select>
+		<select id="techX"></select>
 		<br />
 		
 		<!--technique en ordonnee dans le graphe-->
 		<label for="techY">technique en ordonnée :</label>
-		<select id="techY">
-			<option value="-ltsminpath">-ltsminpath</option>
-			<option value="-ltsminpath -its -smt" selected>-ltsminpath -its -smt</option>
-		</select>
+		<select id="techY"></select>
 		<br />
 		
 		<!--booleen pour enlever les tests failed-->
@@ -91,7 +86,7 @@
 	<!--chargement des fonctions custom JS-->
 	<script type="text/javascript" src="functions.js"></script>
 	<script type="text/javascript" src="init.js"></script>
-	<script type="text/javascript">console.log("demarrage scripts init");initialisation();</script>
+	<script type="text/javascript">initialisation();</script>
 
 </body>
 </html>
