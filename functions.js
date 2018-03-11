@@ -38,49 +38,43 @@ function startScatterChart() {
 
 	console.log("url: "+url+"\ncomparedType: "+comparedType+"\ntechX: "+techX+
 		"\ntechY: "+techY+"\nremoveFailed: "+removeFailed+"\nquery1: "+query1+"\nquery2: "+query2);
-
-	//Script qui interroge 2 fois la google Spreadsheet et affiche le résultat graphiquement.
-	google.charts.setOnLoadCallback(mainExecution);
 	
-	function mainExecution(){
+	//envoie la 1e requete url+query1 a Google
+	sendQuery(url, query1, onReceiveQuery1);
 
-		//envoie la 1e requete url+query1 a Google
-		sendQuery(url, query1, onReceiveQuery1);
+	function onReceiveQuery1(response) {
 
-		function onReceiveQuery1(response) {
+		//extrait une DataTable declaree globale de la 1e reponse recue.
+		dataQuery1 = extractDataTableFromAnswer(response);
 
-			//extrait une DataTable declaree globale de la 1e reponse recue.
-			dataQuery1 = extractDataTableFromAnswer(response);
+		//envoie la 2e requete url+query2 a Google
+		sendQuery(url, query2, onReceiveQuery2);
+	}
 
-			//envoie la 2e requete url+query2 a Google
-			sendQuery(url, query2, onReceiveQuery2);
-		}
+	function onReceiveQuery2(response) {
 
-		function onReceiveQuery2(response) {
+		//extrait une DataTable declaree globale de la 2e reponse recue.
+		dataQuery2 = extractDataTableFromAnswer(response);
 
-			//extrait une DataTable declaree globale de la 2e reponse recue.
-			dataQuery2 = extractDataTableFromAnswer(response);
-
-			//fusionne les deux tables avec Join
-			var data = google.visualization.data.join(
-				dataQuery1, 
-				dataQuery2, 
-				'inner', 
-				[[1,1], [2,2]],
-				[0,3], 
-				[0,3]);
-			
-			console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
-			
-			//genere les graphiques Google Charts et les affiche
-			drawScatterChart(data);
-		}
+		//fusionne les deux tables avec Join
+		var data = google.visualization.data.join(
+			dataQuery1, 
+			dataQuery2, 
+			'inner', 
+			[[1,1], [2,2]],
+			[0,3], 
+			[0,3]);
+		
+		console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
+		
+		//genere les graphiques Google Charts et les affiche
+		drawScatterChart(data);
 	}
 }
 
 function extractClientSettings(){
 	url = "https://docs.google.com/spreadsheets/d/"+
-	document.getElementById("url").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+	document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 	/*fromBuild = document.getElementById("fromBuild").value;
 	toBuild = document.getElementById("toBuild").value;*/
 	
@@ -203,7 +197,7 @@ function drawChronoAffiche(){
 		var isRegex = document.getElementById("regex").checked;
 
 		url = "https://docs.google.com/spreadsheets/d/"+
-		document.getElementById("url").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 		
 
 		var BEqualOrRegexModel;

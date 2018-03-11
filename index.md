@@ -8,8 +8,8 @@
 	<form name="formulaireAjout">
 
 		<!--URL-->
-		<label for="url">Spreadsheet à analyser :</label>
-		<select id="url">
+		<label for="key">Spreadsheet à analyser :</label>
+		<select id="key">
 			<option value="1ZLSqWxT4YT8zhg84WeoeGjCxDbuOWO_BVvS9J3IBKgo">csv001-100</option>
 			<option value="1k1vyrsKs8A8aXDs4HkwkgHPCWvW-41h_F6PS93GHjbo">csv101-200</option>
 			<option value="1MCmsdKAIQKuC9amV3V2XeKL6GpCxNG5aeU0byjt8agg">csv201-300</option>
@@ -54,8 +54,10 @@
 		<input type="checkbox" id="removeFailed" checked />
 		<br />
 		
-		<!--bouton pour lancer la recherche ScatterChart-->
-		<input type="button" value="Scatter Chart" onclick="startScatterChart()" /> 
+		<!--bouton pour lancer la recherche ScatterChart
+			setOnLoadCallBack prend le nom d'une fonction en argument, et la lance
+			(seulement si les librairies JS de google ont fini de charger)-->
+		<input type="button" value="Scatter Chart" onclick="google.charts.setOnLoadCallback(startScatterChart)" /> 
 
 		<br />
 		<br />
@@ -85,8 +87,11 @@
 	
 	<!--chargement de la lib google charts-->
 	<script type="text/javascript">google.charts.load('current', {'packages':['corechart','table']});</script>
+
 	<!--chargement des fonctions custom JS-->
 	<script type="text/javascript" src="functions.js"></script>
+	<script type="text/javascript" src="init.js"></script>
+	<script type="text/javascript">console.log("demarrage scripts init");initialisation();</script>
 
 </body>
 </html>

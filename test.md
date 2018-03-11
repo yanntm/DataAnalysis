@@ -3,12 +3,15 @@
 
 <html>
 <body>
-	<select id="columns_names"></select>
-	<form>
-		<div>
+	<div>
 			<label for="key">key: </label>
 			<input type="text" id="key" placeholder="Spreadsheet Key" value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" />
-		</div>
+			<input type="button" value="Load Menu" onclick="" />
+	</div>
+	<br />
+	<select id="columns_names" style="display:none"></select>
+	<select id="techniques_names" style="display:none"></select>
+	<form>
 		<div>
 			<label for="select">SELECT </label>
 			<input type="text" id="select" placeholder=" *" />
@@ -27,7 +30,7 @@
 			<label for="limit">LIMIT </label>
 			<input type="text" id="limit" placeholder="no limit" value="10" />
 		</div>
-		<input type="button" value="Go" onclick="testQuery()" /> 
+		<input type="button" value="Go" onclick="testQuery()" />
 	</form>
 
 	<!--div ou s'affichera le graphe dataTable (javascript le generera)-->
@@ -42,8 +45,13 @@
 	<!--script principal-->
 	<script>
 		google.charts.load('current', {'packages':['corechart','table']});
-		google.charts.setOnLoadCallback(retrieveColumnsNames);
+		google.charts.setOnLoadCallback(init);
 		
+		function init(){
+			retrieveColumnsNames();
+			retrieveTechniquesNames();
+		}
+
 		function retrieveColumnsNames(){
 			var query = "LIMIT 1";
 			var url = "https://docs.google.com/spreadsheets/d/"+
@@ -61,17 +69,58 @@
 				var data = response.getDataTable();
 
 				//var columnsMap = {};
-				var fragment = document.createDocumentFragment();
+				var menu = document.getElementById("columns_names");
 
-				for(var i =0 ; i<data.getNumberOfColumns(); i++){
+				for(var i=0; i<data.getNumberOfColumns(); i++){
+					//columnsMap[data.getColumnLabel(i)] = data.getColumnId(i);
+					var opt = document.createElement('option');
+					opt.innerHTML = data.getColumnId(i)+": "+data.getColumnLabel(i);
+				    opt.value = data.getColumnId(i);
+				    menu.appendChild(opt);
+				}
+
+				menu.style.display = 'block';
+			}
+		}
+
+		function retrieveTechniquesNames(){
+			var query = "SELECT D, count(D) GROUP BY D";
+			var url = "https://docs.google.com/spreadsheets/d/"+
+				document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+
+			var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
+			queryEncoded.send(printTechniquesNames);
+
+			function printTechniquesNames(response){
+				if (response.isError()) {
+					alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+					return;
+				}
+
+				var data = response.getDataTable();
+				console.log("distinct techniques in the spreadsheet :\n"+
+					data.getDistinctValues(0)+"\n(techniques with <= 1 row removed from dropdown menu)");
+
+
+				var menu = document.getElementById("techniques_names");
+
+				for (var i=0; i<data.getNumberOfRows(); i++) {
+    				if(data.getValue(i,1)>1){
+    					var opt = document.createElement('option');
+						opt.innerHTML = "("+data.getValue(i,1)+"): "+data.getValue(i,0);
+				    	opt.value = data.getValue(i,0);
+				    	menu.appendChild(opt);
+					}
+				}
+				/*for(var i =0 ; i<data.getNumberOfColumns(); i++){
 					//columnsMap[data.getColumnLabel(i)] = data.getColumnId(i);
 					var opt = document.createElement('option');
 					opt.innerHTML = data.getColumnLabel(i);
 				    opt.value = data.getColumnId(i);
-				    fragment.appendChild(opt);
-				}
+				    menu.appendChild(opt);
+				}*/
 
-				document.getElementById("columns_names").appendChild(fragment);
+				menu.style.display = 'block';
 			}
 		}
 
@@ -114,7 +163,6 @@
 				var table = new google.visualization.Table(document.getElementById('table_div'));
 				table.draw(data, {showRowNumber : true});
 			}
-
 		}
 	</script>
 
