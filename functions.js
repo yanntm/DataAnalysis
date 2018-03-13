@@ -44,9 +44,31 @@ function startScatterChart() {
 			[0,3]);
 		
 		console.log("numberOfRows :\ndataQuery1: " + dataQuery1.getNumberOfRows() + " , dataQuery2: " + dataQuery2.getNumberOfRows() + " , dataJoined: " + data.getNumberOfRows());
-		
+
+		//Configuration du schema
+		var opt = {
+			title: '['+techX+'] VS ['+techY+'] '+comparedType,
+			hAxis: {title: techX},
+			vAxis: {title: techY},
+
+			seriesType: 'scatter',
+			series: {
+				1: {type: 'line'}
+			}
+		};
+
+        var wrapper = new google.visualization.ChartWrapper({
+          chartType: 'ComboChart',
+    	  dataTable : data,
+    	  view : {"columns" : [3,5,3]},
+          options: opt,
+          containerId: 'chart_div'
+        });
+
+        wrapper.draw();
+
 		//genere les graphiques Google Charts et les affiche
-		drawScatterChart(data);
+		//drawScatterChart(data);
 	}
 }
 
@@ -101,72 +123,7 @@ function extractDataTableFromAnswer(response) {
 	return response.getDataTable();
 }
 
-function drawScatterChart(data) {
-
-	/*AFFICHAGE DATATABLE*/
-
-	//creation de la Table. On passe en parametre un pointeur vers l'element DOM
-	//dans lequel la Table sera encapsulee dans le fichier HTML.
-	//var table = new google.visualization.Table(document.getElementById('table_div'));
-
-	//affichage graphique de la table de donnees recue en reponse
-	//table.draw(data, {showRowNumber : true});
-
-
-	/*AFFICHAGE SCATTERCHART*/
-
-	var view = new google.visualization.DataView(data);
-	view.setColumns([3, 5, 3]);
-
-	//Configuration du schema
-	var options = {
-			title: '['+techX+'] VS ['+techY+'] '+comparedType,
-			hAxis: {title: techX},
-			vAxis: {title: techY},
-
-			seriesType: 'scatter',
-			series: {
-				1: {type: 'line'}
-			},
-
-			tooltip: { trigger: 'both' }
-	};
-	
-	//creation du ScatterChart. On passe en parametre un pointeur vers l'element DOM
-	//dans lequel le ScatterChart sera encapsule dans le fichier HTML.
-	var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-
-	chart.setAction({
-		id: 'details',
-		text: '[details]',
-		action: function() {
-			var selection = chart.getSelection();
-			var message = '';
-
-			for (var i = 0; i < selection.length; i++) {
-				var item = selection[i];
-				if (item.row != null && item.column != null) {
-					message += '{row:' + item.row + ',column:' + item.column + '}';
-				} else if (item.row != null) {
-					message += '{row:' + item.row + '}';
-				} else if (item.column != null) {
-					message += '{column:' + item.column + '}';
-				}
-			}
-			if (message == '') {
-				message = 'nothing';
-			}
-			alert('You selected ' + message);
-
-		}
-	});
-
-	//affichage graphique du ScatterChart
-	chart.draw(view, options);
-}
-
 // traitement du chronogramme
-// B matches \'.*Airplane.*\'
 
 function drawChronoAffiche(){
 	google.charts.setOnLoadCallback(donneesChrono);
@@ -236,50 +193,3 @@ function drawChronoAffiche(){
 
 	}
 }
-
-/*function drawChrono(data) {
-	var view = new google.visualization.DataView(data);
-
-	var options = {
-		chart: {
-		  title: 'Chronogramme de la Technique ITSMINPATH',
-		  subtitle: 'Pour un model donne et les examinations disponibles'
-		},
-		width: 600,
-		height: 300
-	  };
-	  //var data = response.getDataTable();
-	  //var view = new google.visualization.DataView(data);
-	  var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
-	  chart.draw(view, options);
-
-} 
-function drawChrono() {
-	 var queryStr = encodeURIComponent('SELECT C,H WHERE B matches \'.*Angiogenesis.*\'  and D= \'-ltsminpath\' and F=0 and C = \'ReachabilityDeadlock\' LIMIT 50');
-
-	 var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryStr);
-	 query.send(handlerDataQueryResponse);
-
-} 
-
-
-
-function handlerDataQueryResponse(response) {
-	  if (response.isError()) {
-		alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-		return;
-	  }
-
-	  var options = {
-		chart: {
-		  title: 'Chronogramme de la Technique ITSMINPATH',
-		  subtitle: 'Pour un model donne et les examinations disponibles'
-		},
-		width: 600,
-		height: 300
-	  };
-	  var data = response.getDataTable();
-	  var view = new google.visualization.DataView(data);
-	  var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
-	  chart.draw(view, options);
-}*/

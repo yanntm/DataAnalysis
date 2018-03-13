@@ -81,7 +81,7 @@
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	
 	<!--chargement de la lib google charts-->
-	<script type="text/javascript">google.charts.load('current', {'packages':['corechart','table']});</script>
+	<script type="text/javascript">google.charts.load('current', {'packages':['corechart','table']}); google.charts.load('current');</script>
 
 	<!--chargement des fonctions custom JS-->
 	<script type="text/javascript" src="functions.js"></script>
