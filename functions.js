@@ -54,7 +54,12 @@ function startScatterChart() {
 			seriesType: 'scatter',
 			series: {
 				1: {type: 'line'}
-			}
+			},
+
+			explorer: { 
+            actions: ['dragToZoom', 'rightClickToReset'],
+            keepInBounds: true,
+            maxZoomIn: 20.0}
 		};
 
 		var wrapper = new google.visualization.ChartWrapper({
@@ -66,9 +71,6 @@ function startScatterChart() {
 		});
 
 		wrapper.draw();
-
-		//genere les graphiques Google Charts et les affiche
-		//drawScatterChart(data);
 	}
 }
 
