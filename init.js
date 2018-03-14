@@ -14,17 +14,13 @@ function retrieveColumnsNames(){
 	var url = "https://docs.google.com/spreadsheets/d/"+
 		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 
-	console.log(encodeURIComponent(query));
-	/*Objet Query (le constructeur prend un url et une String bien formatee)*/
-	var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
-	
-	/*envoi de la requete. prend un nom de fonction a callback
-	https://developers.google.com/chart/interactive/docs/reference#methods_11*/
-	queryEncoded.send(function(response){
+	sendQuery(url, query, function(response){
 		/*extract... renvoie un objet Datatable avec les donneess utiles dedans*/
 		var data = extractDataTableFromAnswer(response);
 
 		printColumnsNamesMenus(data);
+		retrieveVersions(data);
+
 	});
 
 	function printColumnsNamesMenus(data){
@@ -48,6 +44,23 @@ function retrieveColumnsNames(){
 		/*on rend les menus visibles dans le document HTML*/
 		menu.style.display = 'inline';
 	}
+
+	function retrieveVersions(data){
+		var versionColumnId;
+		for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/version/i); i++){
+		}
+		versionColumnId = data.getColumnId(i);
+
+		var query = "SELECT "+versionColumnId+", count("+versionColumnId+") GROUP BY "+versionColumnId;
+		var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
+		queryEncoded.send( function(response){
+			var dt = extractDataTableFromAnswer(response);
+			console.log("num of rows: "+dt.getNumberOfRows());
+			//for(var i=0; i<dt.getNumberOfRows(); i++ ) 
+			//	console.log(dt.getValue(i, 0));
+
+		});
+	}
 }
 
 function retrieveTechniquesNames(){
@@ -59,19 +72,14 @@ function retrieveTechniquesNames(){
 	var url = "https://docs.google.com/spreadsheets/d/"+
 		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 
-	/*Objet Query (le constructeur prend un url et une String bien formatee)*/
-	var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
-	
-	/*envoi de la requete. prend un nom de fonction a callback
-	https://developers.google.com/chart/interactive/docs/reference#methods_11*/
-	queryEncoded.send(printTechniquesNamesMenus);
+	sendQuery(url, query, printTechniquesNamesMenus);
 
 	function printTechniquesNamesMenus(response){
 		/*extract... renvoie un objet Datatable avec les donneess utiles dedans*/
 		var data = extractDataTableFromAnswer(response);
 
-		console.log("distinct techniques in the spreadsheet :\n"+
-			data.getDistinctValues(0)+"\n(techniques with <= 1 row removed from dropdown menu)");
+		//console.log("distinct techniques in the spreadsheet :\n"+
+		//	data.getDistinctValues(0)+"\n(techniques with <= 1 row removed from dropdown menu)");
 
 		/*fragment HTML = objet conteneur qu'on remplit de noeuds HTML*/
 		var fragment = document.createDocumentFragment();

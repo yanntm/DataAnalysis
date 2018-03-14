@@ -6,7 +6,7 @@
 	<div>
 			<label for="key">key: </label>
 			<input type="text" id="key" placeholder="Spreadsheet Key" value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" />
-			<input type="button" value="Load Menu" onclick="" />
+			<input type="button" value="Load Menu" onclick="init();" />
 	</div>
 	<br />
 	<select id="columns_names" style="display:none"></select>
@@ -48,8 +48,8 @@
 		google.charts.setOnLoadCallback(init);
 		
 		function init(){
+			cleanForm();
 			retrieveColumnsNames();
-			retrieveTechniquesNames();
 		}
 
 		function retrieveColumnsNames(){
@@ -81,6 +81,12 @@
 
 				menu.style.display = 'block';
 			}
+		}
+
+		function cleanForm(){
+			var tmp = document.getElementById('columns_names');
+			while (tmp.lastChild) 
+  				tmp.removeChild(tmp.lastChild);
 		}
 
 		function testQuery() {

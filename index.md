@@ -8,13 +8,17 @@
 	<div>
 		<!--URL-->
 		<label for="key">Spreadsheet à analyser :</label>
-		<select id="key">
+		<input type="text" id="key" placeholder="Spreadsheet Key" value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" />
+		<!--choix de keyss preremplies-->
+		<label for="keysChoice"> ou </label>
+		<select id="keysChoice" onclick='document.getElementById("key").value = document.getElementById("keysChoice").value ;'>
 			<option value="1ZLSqWxT4YT8zhg84WeoeGjCxDbuOWO_BVvS9J3IBKgo">csv001-100</option>
 			<option value="1k1vyrsKs8A8aXDs4HkwkgHPCWvW-41h_F6PS93GHjbo">csv101-200</option>
 			<option value="1MCmsdKAIQKuC9amV3V2XeKL6GpCxNG5aeU0byjt8agg">csv201-300</option>
 			<option value="1FxiAz3-yENo_WQyM9_g8m9r_7BTYlu1Isqe5iuWcPUo">csv301-400</option>
 			<option value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" selected>csv401-500</option>
 		</select>
+		<br />
 		<!--reload menu button-->
 		<input type="button" value="Load Menu" onclick="initialisation()" />
 	</div>
@@ -31,17 +35,17 @@
 		
 		<!--type de la comparaison-->
 		<label for="comparedType">comparer sur</label>
-		<select id="comparedType"></select>
+		<select id="comparedType" style="display:none"></select>
 		<br />
 		
 		<!--technique en abscisse dans le graphe-->
 		<label for="techX">technique en abscisse :</label>
-		<select id="techX"></select>
+		<select id="techX" style="display:none"></select>
 		<br />
 		
 		<!--technique en ordonnee dans le graphe-->
 		<label for="techY">technique en ordonnée :</label>
-		<select id="techY"></select>
+		<select id="techY" style="display:none"></select>
 		<br />
 		
 		<!--booleen pour enlever les tests failed-->
@@ -56,6 +60,7 @@
 
 		<br />
 		<br />
+		<br />
 		
 		<!-- Les champs modèle pour le chrono -->
 		<label for="model">modèle :</label>
@@ -68,7 +73,7 @@
 		<br />
 
 		<!--bouton pour lancer la recherche Chronogramme-->
-		<input type="button" value="Chronogramme" onclick="drawChronoAffiche()" />
+		<input type="button" value="Chronogramme" onclick="google.charts.setOnLoadCallback(drawChronoAffiche())" />
 	</form>
 
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->

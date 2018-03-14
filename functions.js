@@ -57,15 +57,15 @@ function startScatterChart() {
 			}
 		};
 
-        var wrapper = new google.visualization.ChartWrapper({
-          chartType: 'ComboChart',
-    	  dataTable : data,
-    	  view : {"columns" : [3,5,3]},
-          options: opt,
-          containerId: 'chart_div'
-        });
+		var wrapper = new google.visualization.ChartWrapper({
+		  'chartType' : 'ComboChart',
+		  'dataTable' : data,
+		  'view' : {"columns" : [3,5,3]},
+		  'options' : opt,
+		  'containerId' : 'chart_div'
+		});
 
-        wrapper.draw();
+		wrapper.draw();
 
 		//genere les graphiques Google Charts et les affiche
 		//drawScatterChart(data);
@@ -75,8 +75,6 @@ function startScatterChart() {
 function extractClientSettings(){
 	url = "https://docs.google.com/spreadsheets/d/"+
 	document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
-	/*fromBuild = document.getElementById("fromBuild").value;
-	toBuild = document.getElementById("toBuild").value;*/
 	
 	removeFailed = document.getElementById("removeFailed").checked;
 	techX = document.getElementById("techX").value;
@@ -126,70 +124,85 @@ function extractDataTableFromAnswer(response) {
 // traitement du chronogramme
 
 function drawChronoAffiche(){
-	google.charts.setOnLoadCallback(donneesChrono);
+	var model = document.getElementById("model").value;
+	var examination = document.getElementById("examination").value;
+	var isRegex = document.getElementById("regex").checked;
 
-	function donneesChrono(){
+	url = "https://docs.google.com/spreadsheets/d/"+
+	document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 
-		var model = document.getElementById("model").value;
-		var examination = document.getElementById("examination").value;
-		var isRegex = document.getElementById("regex").checked;
 
-		url = "https://docs.google.com/spreadsheets/d/"+
-		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+	var BEqualOrRegexModel;
+	if (isRegex) {
+		BEqualOrRegexModel = "B matches \'.*" +model+ ".*\'";
+	} else {
+		BEqualOrRegexModel = "B=\'" +model+ "\'";
+	}
+
+	/*Quand le ChartWrapper traitera cette requete, il produira un objet DataTable avec:
+	- colonne 0 : version du log
+	- colonne 1..i..Nombre de techniques differentes -1 : 
+			sum(chose a comparer) des valeurs pour la technique i*/
+
+	var queryStr1 = "SELECT P,sum(H) WHERE " +BEqualOrRegexModel+
+		" and C=\'" +examination+ "\' and F=0 GROUP BY P PIVOT D ORDER BY P";
+
+	console.log(queryStr1);
+	
+	sendQuery(url,queryStr1,RecevoirQueryStr1);
+
+	function RecevoirQueryStr1(reponse){
+		var data = extractDataTableFromAnswer(reponse);
 		
 
-		var BEqualOrRegexModel;
-		if (isRegex) {
-			BEqualOrRegexModel = "B matches \'.*" +model+ ".*\'";
-		} else {
-			BEqualOrRegexModel = "B=\'" +model+ "\'";
-		}
+		var view = new google.visualization.DataView(data);
+		/*creation de la liste des colonnes a afficher*/
+		var columns = [];
+		for (var i = 1; i <= view.getNumberOfColumns()-1; i++) {columns.push(i);}
+		/*creation d'une colonne dynamique qui change les Number en String de l'axe X
+		pour que les valeurs X soient des valeurs discretes*/
+		var dateStringColumn = {
+	    	'type': 'string',
+	    	'calc': function (dt, row) {return dt.getFormattedValue(row, 0);}
+	    };
+	    columns.unshift(dateStringColumn);
+	   	/*indique a la DataView quelles colonnes afficher*/
+		view.setColumns(columns);
 
-		var queryStr1 = "SELECT P,sum(H) WHERE " +BEqualOrRegexModel+
-			" and C=\'" +examination+ "\' and F=0 GROUP BY P PIVOT D ORDER BY P";
+		var options = {
+			chart: {
+				title: 'Chronogramme'
+			},
+			lineWidth: 1.5,
+			pointSize: 2/*,
+			interpolateNulls: true*/
+		};
 
-		//var queryStr1 = "SELECT A,min(H) WHERE B matches \'.*" +model+ ".*\' " +
-		//	"and D=\'-ltsminpath -its -smt\'" + " and F=0 GROUP BY A PIVOT C ORDER BY A";
-		
-		console.log(queryStr1);
-		sendQuery(url,queryStr1,RecevoirQueryStr1);
 
-		function RecevoirQueryStr1(reponse){
-			data = extractDataTableFromAnswer(reponse);
-			console.log("numberOfRows :\ndata: " + data.getNumberOfRows());
-			
+		/*Dans l'appel au constructeur ChartWrapper, l'option 'view' est différente de ce qu'offre
+		une DataView sans ChartWrapper : 
+		  Pour 'calc': function (dt, row) {return dt.getFormattedValue(row, 0);}
+			-avec la DataView normale, le graphe affiche bien un axe X de valeurs discretes
+			 correspondant a la String de l'int version.
+			-avec l'option 'view' du ChartWrapper, le graphe affiche un axe X de valeurs discretes
+			 mais les valeurs sont de la forme "General20170000000" (arrondi a l'annee la plus proche ?
+			 soulignant une erreur de formatage Int -> String ... 
+			 Cela fausse totalement le graphe.
+		=> On contournera donc ce probleme en utilisant une DataView normale 
+		en tant que DataTable du ChartWrapper. */
 
-			var options = {
-				chart: {
-					title: 'Chronogramme'
-				},
-				lineWidth: 1.5,
-				pointSize: 2,
-				interpolateNulls: true
-			};
+		var wrapper = new google.visualization.ChartWrapper({
+			/* si preference pour LineChart, ajouter interpolateNulls:true dans les options*/
+			'chartType' : 'ColumnChart',
+			'dataTable' : view,
+			'options': options,
+			'containerId':'chrono_div'
+		});
 
-			var view = new google.visualization.DataView(data);
+		wrapper.draw();	
 
-			var columns = [];
-			for (var i = 1; i <= view.getNumberOfColumns()-1; i++) {columns.push(i);}
-
-			var dateStringColumn = 
-				{
-            		type: 'string',
-            		calc: function (dt, row) {return dt.getFormattedValue(row, 0);}
-            	}
-
-            columns.unshift(dateStringColumn);
-
-			view.setColumns(columns);
-
-			var chart = new google.visualization.LineChart(document.getElementById("chrono_div"));
-			chart.draw(view, options);
-
-			//affichage graphique de la table de donnees 
-			var table = new google.visualization.Table(document.getElementById('table_div'));
-			table.draw(view, {showRowNumber : true});
-		}
-
+		//affichage graphique de la table de donnees 
+		var table = new google.visualization.Table(document.getElementById('table_div'));
+		table.draw(view, {showRowNumber : true});
 	}
 }
