@@ -36,13 +36,16 @@ function retrieveColumnsNames(){
 		}
 
 		/*dropdown menus auxquels on veut ajouter les options*/
-		var menu = document.getElementById("comparedType");
+		var menu1 = document.getElementById("comparedType");
+		var menu2 = document.getElementById("comparedColumn");
 
 		/*ajout des options*/
-		menu.appendChild(fragment.cloneNode(true));
+		menu1.appendChild(fragment.cloneNode(true));
+		menu2.appendChild(fragment.cloneNode(true));
 
 		/*on rend les menus visibles dans le document HTML*/
-		menu.style.display = 'inline';
+		menu1.style.display = 'inline';
+		menu2.style.display = 'inline';
 	}
 
 	function retrieveVersions(data){
@@ -110,10 +113,10 @@ function retrieveTechniquesNames(){
 }
 
 function cleanForm(){
-		var toClean = ["comparedType", "techX", "techY", ];
-		
+		var toClean = ["comparedType", "techX", "techY", "comparedColumn"];
 		for(var i=0; i<toClean.length; i++){
 			var tmp = document.getElementById(toClean[i]);
+			tmp.style.display = 'none';
 			while (tmp.lastChild) 
   				tmp.removeChild(tmp.lastChild);
 		}

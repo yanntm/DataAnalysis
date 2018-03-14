@@ -100,6 +100,37 @@ function createQueryScatterChart(techniqueName){
 	return query;
 }
 
+function createQueryChronogramme(){
+	/*on extrait les parametres utiles renseignes dans le formulaire*/
+	var model = document.getElementById("model").value;
+	var examination = document.getElementById("examination").value;
+	var isRegex = document.getElementById("regex").checked;
+	var comparedColumn = document.getElementById("comparedColumn").value;
+	var aggreg = document.getElementById("aggreg").value;
+	var removeFailed = document.getElementById("removeFailedChrono").checked;
+
+	/*la colonne a comparer, <=> axe Y*/
+	var selectField = aggreg+"("+comparedColumn+")";
+
+	var BEqualOrRegexModel;
+	if (isRegex) {
+		BEqualOrRegexModel = "B matches \'.*" +model+ ".*\'";
+	} else {
+		BEqualOrRegexModel = "B=\'" +model+ "\'";
+	}
+
+	var query = "SELECT P,"+selectField+" WHERE "
+	query += BEqualOrRegexModel+" and C=\'" +examination+ "\'";
+
+	if(removeFailed){
+		query += " AND F=0";
+	}
+
+	query += " GROUP BY P PIVOT D ORDER BY P";
+
+	return query;
+}
+
 function sendQuery(url, queryString, handleQueryResponse) {
 	
 	//Requete Google Query
@@ -126,34 +157,20 @@ function extractDataTableFromAnswer(response) {
 // traitement du chronogramme
 
 function drawChronoAffiche(){
-	var model = document.getElementById("model").value;
-	var examination = document.getElementById("examination").value;
-	var isRegex = document.getElementById("regex").checked;
-
 	url = "https://docs.google.com/spreadsheets/d/"+
 	document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
-
-
-	var BEqualOrRegexModel;
-	if (isRegex) {
-		BEqualOrRegexModel = "B matches \'.*" +model+ ".*\'";
-	} else {
-		BEqualOrRegexModel = "B=\'" +model+ "\'";
-	}
 
 	/*Quand le ChartWrapper traitera cette requete, il produira un objet DataTable avec:
 	- colonne 0 : version du log
 	- colonne 1..i..Nombre de techniques differentes -1 : 
-			sum(chose a comparer) des valeurs pour la technique i*/
+			fonctiondAggregation(chose a comparer) des valeurs pour la technique i*/
+	var query = createQueryChronogramme();
 
-	var queryStr1 = "SELECT P,sum(H) WHERE " +BEqualOrRegexModel+
-		" and C=\'" +examination+ "\' and F=0 GROUP BY P PIVOT D ORDER BY P";
-
-	console.log(queryStr1);
+	console.log(query);
 	
-	sendQuery(url,queryStr1,RecevoirQueryStr1);
+	sendQuery(url,query,RecevoirQuery);
 
-	function RecevoirQueryStr1(reponse){
+	function RecevoirQuery(reponse){
 		var data = extractDataTableFromAnswer(reponse);
 		
 
@@ -176,8 +193,14 @@ function drawChronoAffiche(){
 				title: 'Chronogramme'
 			},
 			lineWidth: 1.5,
-			pointSize: 2/*,
-			interpolateNulls: true*/
+			pointSize: 2,
+			/*interpolateNulls: true,*/
+
+			explorer: { 
+				/*permet le zoom sur l'axe Y. Le zoom ne marche pas sur les axes discrets(X)*/
+	            actions: ['dragToZoom', 'rightClickToReset'],
+	            keepInBounds: true,
+	            maxZoomIn: 20.0}
 		};
 
 

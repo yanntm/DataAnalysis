@@ -63,6 +63,17 @@
 		<br />
 		
 		<!-- Les champs modèle pour le chrono -->
+		<label for="comparedColumn"> comparer sur :</label>
+		<select id="comparedColumn" style="display:none"></select>
+		<label for="aggreg"> aggréger sur </label>
+		<select id="aggreg">
+			<option value="avg">average</option>
+			<option value="count">count</option>
+			<option value="max">max</option>
+			<option value="min">min</option>
+			<option value="sum" selected>sum</option>
+		</select>
+		<br />
 		<label for="model">modèle :</label>
 		<input type="text" id="model" placeholder="AirplaneLD-COL-0010" value="AirplaneLD-COL-0010" />
 		<label for="regex">Regex ?</label>
@@ -71,7 +82,10 @@
 		<label for="examination"> examination :</label>
 		<input type="text" id="examination" placeholder="LTLCardinality" value="LTLCardinality" />
 		<br />
-
+		<!--booleen pour enlever les tests failed-->
+		<label for="removeFailedChrono">enlever les tests failed</label>
+		<input type="checkbox" id="removeFailedChrono" checked />
+		<br />
 		<!--bouton pour lancer la recherche Chronogramme-->
 		<input type="button" value="Chronogramme" onclick="google.charts.setOnLoadCallback(drawChronoAffiche())" />
 	</form>
@@ -79,7 +93,13 @@
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->
 	<div id="chrono_div" style="width: 600px; height: 300px; border : 1px #000 solid;"></div>
 	<div id="table_div" style="width: 600px; height: 200px; border : 1px #000 solid;"></div>
-	<div id="chart_div" style="width: 600px; height: 500px; border : 1px #000 solid;"></div>
+
+	 <!--Div that will hold the dashboard-->
+    <div id="dashboard_div">
+      <!--Divs that will hold each control and chart-->
+      <div id="filter_div"></div>
+      <div id="chart_div" style="width: 600px; height: 500px; border : 1px #000 solid;"></div>
+    </div>
 	
 
 	<!--chargement du loader de lib google charts (+ajax)-->
