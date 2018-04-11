@@ -1,6 +1,8 @@
-# Test de query sur google sheet
+# Index
 
 [DIY test a Query](test.html){:target="_blank"}
+| 
+[upload page](uploadLogs/upload.html){:target="_blank"}
 
 <html>
 <body>

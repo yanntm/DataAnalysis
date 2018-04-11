@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd ./travisLogs
-
 let length=$2-$1+1
 let skipped=$1-1
 echo "length : $length, skip until : $skipped"
