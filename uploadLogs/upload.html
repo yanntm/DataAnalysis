@@ -7,7 +7,7 @@
   <body>
     <p>Google Sheets API Quickstart</p>
 
-    <input type="file" id="fileToUp" />
+    <input type="file" id="fileToUp" onchange="handleFile(this.files[0])" />
     <br />
 
     <!--Add buttons to initiate auth sequence and sign out-->

@@ -16,6 +16,18 @@ console.log("d");
 var authorizeButton = document.getElementById('authorize-button');
 var signoutButton = document.getElementById('signout-button');
 
+/**
+ *
+ */
+function handleFile(file) {
+	var reader = new FileReader();
+	reader.onload = function(e) {
+  		var text = reader.result;
+  		console.log("file: \n"+text);
+	};
+	reader.readAsText(file);
+}
+
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -119,10 +131,10 @@ function appendPre(message) {
  	var fileMetadata = {'name': 'photo.jpg'};
  	var media = {
  		mimeType: 'image/jpeg',
- 		body: fs.createReadStream('files/photo.jpg')
+ 		body: "ab"/*fs.createReadStream('files/photo.jpg')*/
  	};
-
- 	drive.files.create({
+ 	console.log("j");
+ 	gapi.client.drive.files.create({
  		resource: fileMetadata,
  		media: media,
  		fields: 'id'
@@ -134,5 +146,6 @@ function appendPre(message) {
 			console.log('File Id: ', file.id);
 		}
 	});
+	console.log("k");
 
  }
