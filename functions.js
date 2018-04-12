@@ -119,14 +119,14 @@ function createQueryChronogramme(){
 		BEqualOrRegexModel = "B=\'" +model+ "\'";
 	}
 
-	var query = "SELECT P,"+selectField+" WHERE "
+	var query = "SELECT R,"+selectField+" WHERE "
 	query += BEqualOrRegexModel+" and C=\'" +examination+ "\'";
 
 	if(removeFailed){
 		query += " AND F=0";
 	}
 
-	query += " GROUP BY P PIVOT D ORDER BY P";
+	query += " GROUP BY R PIVOT D ORDER BY R";
 
 	return query;
 }
