@@ -89,12 +89,15 @@ function createQueryScatterChart(techniqueName){
 	var query;
 
 	//clause SELECT : colonnes log, model, examination, [comparedType]
-	query = 'SELECT A, B, C, '+comparedType ;
+	query = 'SELECT '+sheetColumns['log']+', '+
+			sheetColumns['Model']+', '+
+			sheetColumns['Examination']+', '+
+			comparedType ;
 	//clause WHERE : technique = [techniqueName] AND (optionnel) testFail = 0
-	query += ' WHERE D ="'+techniqueName+'"';
+	query += ' WHERE '+sheetColumns['Techniques']+' ="'+techniqueName+'"';
 	
 	if(removeFailed){
-		query += ' AND F = 0';
+		query += ' AND '+sheetColumns['Test fail']+' = 0';
 	}
 
 	return query;
@@ -114,19 +117,29 @@ function createQueryChronogramme(){
 
 	var BEqualOrRegexModel;
 	if (isRegex) {
-		BEqualOrRegexModel = "B matches \'.*" +model+ ".*\'";
+		BEqualOrRegexModel = sheetColumns['Model']+" matches \'.*" +model+ ".*\'";
 	} else {
-		BEqualOrRegexModel = "B=\'" +model+ "\'";
+		BEqualOrRegexModel = sheetColumns['Model']+"=\'" +model+ "\'";
 	}
 
-	var query = "SELECT R,"+selectField+" WHERE "
-	query += BEqualOrRegexModel+" and C=\'" +examination+ "\'";
+	/*creation de la requete*/
 
+	//SELECT
+	var query = "SELECT "+sheetColumns['version']+","+selectField;
+
+	//WHERE
+	query += " WHERE "+BEqualOrRegexModel+" and "+
+		sheetColumns['Examination']+"=\'" +examination+ "\'";
+
+	/*suppression ou non des testFailed*/
 	if(removeFailed){
-		query += " AND F=0";
+		query += " AND "+sheetColumns['Test fail']+"=0";
 	}
 
-	query += " GROUP BY R PIVOT D ORDER BY R";
+	//GROUP BY PIVOT ORDER BY
+	query += " GROUP BY "+sheetColumns['version']+
+		" PIVOT "+sheetColumns['Techniques']+
+		" ORDER BY "+sheetColumns['version'];
 
 	return query;
 }

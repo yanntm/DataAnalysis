@@ -1,9 +1,11 @@
+var sheetColumns;
+var sheetVersions;
+
 function initialisation(){
 	cleanForm();
 
 	/*affiche les dropdown menus contenant les noms de toutes les colonnes de la Spreadsheet*/
 	google.charts.setOnLoadCallback(retrieveColumnsNames);
-	google.charts.setOnLoadCallback(retrieveTechniquesNames);
 }
 
 function retrieveColumnsNames(){
@@ -18,21 +20,38 @@ function retrieveColumnsNames(){
 		/*extract... renvoie un objet Datatable avec les donneess utiles dedans*/
 		var data = extractDataTableFromAnswer(response);
 
-		printColumnsNamesMenus(data);
+		/*creation du tableau key/value lettre<=>nom de colonne*/
+		sheetColumns = {};
+		for(var i=0; i<data.getNumberOfColumns(); i++){
+			sheetColumns[data.getColumnLabel(i)] = data.getColumnId(i);
+		}
+
+		for (var key in sheetColumns) {
+		    if (sheetColumns.hasOwnProperty(key)) {
+		        console.log(key + " : " + sheetColumns[key]);
+		    }
+		}
+
+
+
+		printColumnsNamesMenus();
 		retrieveVersions(data);
+		retrieveTechniquesNames();
 
 	});
 
-	function printColumnsNamesMenus(data){
+	function printColumnsNamesMenus(){
 		/*fragment HTML = objet conteneur qu'on remplit de noeuds HTML*/
 		var fragment = document.createDocumentFragment();
 
 		/*boucle d'ajout d'un noeud <option> de nom de colonne dans le fragment HTML*/
-		for(var i=0; i<data.getNumberOfColumns(); i++){
-			var opt = document.createElement('option');
-			opt.innerHTML = data.getColumnId(i)+": "+data.getColumnLabel(i);
-		    opt.value = data.getColumnId(i);
-		    fragment.appendChild(opt);
+		for (var key in sheetColumns) {
+		    if (sheetColumns.hasOwnProperty(key)) {
+		        var opt = document.createElement('option');
+				opt.innerHTML = sheetColumns[key]+": "+key;
+		    	opt.value = sheetColumns[key];
+		    	fragment.appendChild(opt);
+		    }
 		}
 
 		/*dropdown menus auxquels on veut ajouter les options*/
@@ -67,9 +86,14 @@ function retrieveColumnsNames(){
 }
 
 function retrieveTechniquesNames(){
+
+	//console.log(techniqueColumnId);
+
 	/*String requete qui rend les techniques distinctes et le nombre de lignes
 	resultats pour chacune*/
-	var query = "SELECT D, count(D) GROUP BY D";
+	var query = "SELECT "+sheetColumns["Techniques"]+
+		", count("+sheetColumns["Techniques"]+
+		") GROUP BY "+sheetColumns["Techniques"];
 
 	/*url de la spreadsheet google. concatenation debut_url+ Spreadsheet Key + fin_url*/
 	var url = "https://docs.google.com/spreadsheets/d/"+
