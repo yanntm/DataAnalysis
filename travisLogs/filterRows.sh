@@ -1,8 +1,9 @@
 #!/bin/bash
 
-#sort test.csv -s -t, -k1,1n -k2,2d -k3,3dr | sort -s -t, -k1,1n -k2,2d -u
+#========== DOC commande sort ==========
+#sort test.csv -s -t, -k1,1n -k2,2d -k3,3nr | sort -s -t, -k1,1n -k2,2d -u
 
-sort test.csv -s -t, -k1,1n -k2,2dr -k3,3n | sort -s -t, -k1,1n -u
+#sort test.csv -s -t, -k1,1n -k2,2dr -k3,3n | sort -s -t, -k1,1n -u
 
 # -s empêche le tri naturel par défaut sur toute la ligne à la fin des tris renseignés.
 # -t, indique le caractère séparateur des colonnes (ici la virgule)
@@ -11,9 +12,10 @@ sort test.csv -s -t, -k1,1n -k2,2dr -k3,3n | sort -s -t, -k1,1n -u
 # -u indique qu'à valeurs égales sur les colonnes choisies pour faire le tri,
 #        on ne garde que la première ligne rencontrée et on supprime les autres duplicats.
 #        Attention: c'est la 1e ligne rencontrée dans les données brutes, avant tri (non triées)
+#========== FIN ========================
 
 
-#========== ALGO ==========
+#========== ALGO sort ==========
 #le premier sort trie avec en premier les colonnes clefs [model,examination,techniques,version]
 #puis à valeurs égales dans ces colonnes, trie par ordre croissant les Test Fail
 #puis à valeurs égales pour Test Fail, trie par ordre décroissant les Test Passed
@@ -22,4 +24,36 @@ sort test.csv -s -t, -k1,1n -k2,2dr -k3,3n | sort -s -t, -k1,1n -u
 #le 2e sort trie les colonnes clefs [model,examination,techniques,version]
 # avec -u, à valeurs égales dans ces colonnes clefs, ne garde que la première ligne rencontrée
 # (qui est la ligne filtrée selon le premier sort (fail min, passed max, duration max))
-#========== FIN ===========
+#========== FIN ================
+
+read -r firstline < $1;
+
+IFS=',' read -r -a cols <<< $firstline;
+
+shopt -s nocasematch;
+
+printf "\n===== [index, nom] des colonnes ===== \n";
+for index in "${!cols[@]}"
+do
+    printf "$(($index +1)) ${cols[index]} \n";
+    [[ ${cols[index]} =~ model ]] && let mod=$(($index +1));
+    [[ ${cols[index]} =~ examination ]] && let exa=$(($index +1));
+    [[ ${cols[index]} =~ technique ]] && let tech=$(($index +1));
+    [[ ${cols[index]} =~ version ]] && let ver=$(($index +1));
+
+    [[ ${cols[index]} =~ fail ]] && let fail=$(($index +1));
+    [[ ${cols[index]} =~ fin|pass ]] && let pass=$(($index +1));
+    [[ ${cols[index]} =~ duration ]] && let dur=$(($index +1));
+done;
+printf "===================================== \n\n";
+
+printf "[CHECK] le menu au-dessus comporte-il bien les entetes des colonnes du csv ?\n";
+grep -F "$firstline" $1;
+printf "APRES\n";
+colclefs="-k${mod},${mod} -k${exa},${exa} -k${tech},${tech} -k${ver},${ver}";
+#-k${dur},${dur}nr ? ou sans r ? (max or min)
+colfiltr="-k${fail},${fail}n -k${pass},${pass}nr -k${dur},${dur}nr";
+
+echo "sort $1 -s -t, $colclefs $colfiltr | sort $1 -s -t, $colclefs -u;";
+wc -l $1
+sort $1 -s -t, $colclefs $colfiltr | sort $1 -s -t, $colclefs -u | wc -l;
