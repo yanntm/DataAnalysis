@@ -167,47 +167,6 @@ function extractDataTableFromAnswer(response) {
 	return response.getDataTable();
 }
 
-function createQueryDashboard(){
-	/*on extrait les parametres utiles renseignes dans le formulaire*/
-	var model = document.getElementById("model").value;
-	var examination = document.getElementById("examination").value;
-	var isRegex = document.getElementById("regex").checked;
-	var comparedColumn = document.getElementById("comparedColumn").value;
-	var aggreg = document.getElementById("aggreg").value;
-	var removeFailed = document.getElementById("removeFailedChrono").checked;
-
-	/*la colonne a comparer, <=> axe Y*/
-	var selectField = aggreg+"("+comparedColumn+")";
-
-	var BEqualOrRegexModel;
-	if (isRegex) {
-		BEqualOrRegexModel = sheetColumns['Model']+" matches \'.*" +model+ ".*\'";
-	} else {
-		BEqualOrRegexModel = sheetColumns['Model']+"=\'" +model+ "\'";
-	}
-
-	/*creation de la requete*/
-
-	//SELECT
-	var query = "SELECT "+sheetColumns['version']+","+selectField;
-
-	//WHERE
-	query += " WHERE "+BEqualOrRegexModel+" and "+
-		sheetColumns['Examination']+"=\'" +examination+ "\'";
-
-	/*suppression ou non des testFailed*/
-	if(removeFailed){
-		query += " AND "+sheetColumns['Test fail']+"=0";
-	}
-
-	//GROUP BY PIVOT ORDER BY
-	query += " GROUP BY "+sheetColumns['version']+
-		" PIVOT "+sheetColumns['Techniques']+
-		" ORDER BY "+sheetColumns['version'];
-
-	return query;
-}
-
 function sendQuery(url, queryString, handleQueryResponse) {
 	
 	//Requete Google Query
@@ -322,19 +281,19 @@ function drawDashBoardAffiche(){
     function drawDashboard() {
     	url = "https://docs.google.com/spreadsheets/d/"+
 		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
-		var queryD = createQueryDashboard();
+		var queryD = createQueryChronogramme();
 		console.log(queryD);	
 		sendQuery(url,queryD,RecevoirQueryDashboard);
 		function RecevoirQueryDashboard(reponse){
 			var dataD = extractDataTableFromAnswer(reponse);
-			var a = 0;
+			/*var a = 0;
 			for(var i=0; i<dataD.getNumberOfRows(); i++ ){
 				for(var j=0; j<dataD.getNumberOfColumns(); j++ ){
 					if (!dataD.getValue(i,j)) {
 						dataD.setValue(i,j,a); 
 					}
 				}
-			}
+			}*/
 
 			var columnsTable = new google.visualization.DataTable();
 		    columnsTable.addColumn('number', 'colIndex');
@@ -380,8 +339,12 @@ function drawDashBoardAffiche(){
 		    function setChartView () {
 		        var state = columnFilter.getState();
 		        var row;
+		        var dateStringColumn = {
+	    			'type': 'string',
+	    			'calc': function (dt, row) {return dataD.getFormattedValue(row, 0);}
+	    		};
 		        var view = {
-		            columns: [0]
+		            columns: [dateStringColumn]
 		        };
 		        for (var i = 0; i < state.selectedValues.length; i++) {
 		            row = columnsTable.getFilteredRows([{column: 1, value: state.selectedValues[i]}])[0];
