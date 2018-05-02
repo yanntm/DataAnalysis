@@ -14,13 +14,13 @@ do
 	
 	#printf "build number : $build_num\n" 
 	#echo ${jobs_ids[*]}
-
+    # reccuperer les fichiers .txt contenant les logs 
 	for job_id in ${jobs_ids[@]}
 	do
 		echo $job_id
 		curl "https://api.travis-ci.org/v3/job/$job_id/log.txt" > log$job_id.txt
 	done
 done
-
+#recupperation des données dans csv
 ./logs2csv.pl log$job_id.txt > csv$1-$2.csv
 rm log*.txt

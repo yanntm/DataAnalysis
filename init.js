@@ -24,19 +24,18 @@ function retrieveColumnsNames(){
 		sheetColumns = {};
 		for(var i=0; i<data.getNumberOfColumns(); i++){
 			sheetColumns[data.getColumnLabel(i)] = data.getColumnId(i);
+			//console.log(data.getColumnLabel(i)+" ** "+data.getColumnId(i));
 		}
 
 		for (var key in sheetColumns) {
 		    if (sheetColumns.hasOwnProperty(key)) {
-		        console.log(key + " : " + sheetColumns[key]);
+		        //console.log(key + " : " + sheetColumns[key]);
 		    }
 		}
-
-
-
 		printColumnsNamesMenus();
 		retrieveVersions(data);
 		retrieveTechniquesNames();
+		retrieveModel(data);
 
 	});
 
@@ -53,7 +52,6 @@ function retrieveColumnsNames(){
 		    	fragment.appendChild(opt);
 		    }
 		}
-
 		/*dropdown menus auxquels on veut ajouter les options*/
 		var menu1 = document.getElementById("comparedType");
 		var menu2 = document.getElementById("comparedColumn");
@@ -77,12 +75,72 @@ function retrieveColumnsNames(){
 		var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
 		queryEncoded.send( function(response){
 			var dt = extractDataTableFromAnswer(response);
-			console.log("num of rows: "+dt.getNumberOfRows());
-			//for(var i=0; i<dt.getNumberOfRows(); i++ ) 
-			//	console.log(dt.getValue(i, 0));
+			console.log("Le nombre de version: "+dt.getNumberOfRows());
+			for(var i=0; i<dt.getNumberOfRows(); i++ ) 
+				console.log(dt.getValue(i, 0));
 
 		});
 	}
+
+	function retrieveModel(data){
+		var versionColumnId;
+		for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Model/i); i++){
+		}
+		ModelColumnId = data.getColumnId(i);
+
+		var query = "SELECT "+ModelColumnId+", count("+ModelColumnId+") GROUP BY "+ModelColumnId;
+		var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
+		queryEncoded.send( function(response){
+			var dt1 = extractDataTableFromAnswer(response);
+			console.log("Le nombre de Model: "+dt1.getNumberOfRows());
+			var ListeModel = new Array();
+			for(var i=0; i<dt1.getNumberOfRows()-1; i++ ) 
+		 		//console.log(dt1.getValue(i, 0));
+		 		ListeModel[i] = dt1.getValue(i, 0);
+		 	
+		 	document.monform.model.options.length = ListeModel.length;
+		 	for (var i = 0 ;i < ListeModel.length; i++) {
+		 		document.monform.model.options[i].value=ListeModel[i];
+		 		document.monform.model.options[i].text=ListeModel[i];
+		 	}
+		});
+	}
+}
+
+function funExa(model){
+	var url = "https://docs.google.com/spreadsheets/d/"+
+		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+
+	console.log("La valeur du modesl est :" +model);
+	/*var modelColumnId;
+	var examinationColumnId;
+	for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Model/i); i++){
+	}
+	modelColumnId = data.getColumnId(i);
+
+	for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Examination/i); i++){
+	}
+	examinationColumnId = data.getColumnId(i);*/
+
+	//var query = "SELECT "+examinationColumnId+"WHERE "+modelColumnId+" = "+model;
+	var query = "SELECT C WHERE B=\'" +model+ "\'";
+	var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
+	queryEncoded.send( function(response){
+			var Liste = extractDataTableFromAnswer(response);
+			//console.log("Le nombre d'examination du Model: "+Liste.getNumberOfRows());
+			var ListeExam = new Array();
+			for(var i=0; i<Liste.getNumberOfRows()-1; i++ ) 
+		 		//console.log(Liste.getValue(i, 0));
+		 		ListeExam[i] = Liste.getValue(i, 0);
+		 	//console.log("La taille de la liste: "+ListeExam.length);
+		 	var newListe = cleanArray(ListeExam);
+		 	//console.log("La taille de nouvelle liste: "+newListe.length);
+		 	document.monform.examination.options.length = newListe.length;
+		 	for (var i = 0 ;i < ListeExam.length; i++) {
+		 		document.monform.examination.options[i].value=newListe[i];
+		 		document.monform.examination.options[i].text=newListe[i];
+		 	}
+	});
 }
 
 function retrieveTechniquesNames(){
@@ -134,6 +192,17 @@ function retrieveTechniquesNames(){
 		menu1.style.display = 'inline';
 		menu2.style.display = 'inline';
 	}
+}
+
+function cleanArray(array) {
+	var i, j, len = array.length, out = [], obj = {};
+	for (i = 0; i < len; i++) {
+	obj[array[i]] = 0;
+	}
+	for (j in obj) {
+	out.push(j);
+	}
+	return out;
 }
 
 function cleanForm(){

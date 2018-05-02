@@ -167,6 +167,74 @@ function extractDataTableFromAnswer(response) {
 	return response.getDataTable();
 }
 
+function createQueryDashboard(){
+	/*on extrait les parametres utiles renseignes dans le formulaire*/
+	var model = document.getElementById("model").value;
+	var examination = document.getElementById("examination").value;
+	var isRegex = document.getElementById("regex").checked;
+	var comparedColumn = document.getElementById("comparedColumn").value;
+	var aggreg = document.getElementById("aggreg").value;
+	var removeFailed = document.getElementById("removeFailedChrono").checked;
+
+	/*la colonne a comparer, <=> axe Y*/
+	var selectField = aggreg+"("+comparedColumn+")";
+
+	var BEqualOrRegexModel;
+	if (isRegex) {
+		BEqualOrRegexModel = sheetColumns['Model']+" matches \'.*" +model+ ".*\'";
+	} else {
+		BEqualOrRegexModel = sheetColumns['Model']+"=\'" +model+ "\'";
+	}
+
+	/*creation de la requete*/
+
+	//SELECT
+	var query = "SELECT "+sheetColumns['version']+","+selectField;
+
+	//WHERE
+	query += " WHERE "+BEqualOrRegexModel+" and "+
+		sheetColumns['Examination']+"=\'" +examination+ "\'";
+
+	/*suppression ou non des testFailed*/
+	if(removeFailed){
+		query += " AND "+sheetColumns['Test fail']+"=0";
+	}
+
+	//GROUP BY PIVOT ORDER BY
+	query += " GROUP BY "+sheetColumns['version']+
+		" PIVOT "+sheetColumns['Techniques']+
+		" ORDER BY "+sheetColumns['version'];
+
+	return query;
+}
+
+function sendQuery(url, queryString, handleQueryResponse) {
+	
+	//Requete Google Query
+	var queryEncoded = new google.visualization.Query(url + encodeURIComponent(queryString));
+
+	//envoi de la Requete avec en parametre la fonction a appeler quand la reponse arrive
+	queryEncoded.send(handleQueryResponse);
+}
+
+function extractDataTableFromAnswer(response) {
+	/*response est un objet QueryResponse passee par la methode send.
+		https://developers.google.com/chart/interactive/docs/reference#methods_12*/
+
+	/*Erreur si requete fausse*/
+	if (response.isError()) {
+		alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+		return;
+	}
+
+	/*donnees utiles dans l'objet QueryResponse*/
+	return response.getDataTable();
+}
+
+
+
+
+
 // traitement du chronogramme
 
 function drawChronoAffiche(){
@@ -186,8 +254,8 @@ function drawChronoAffiche(){
 	function RecevoirQuery(reponse){
 		var data = extractDataTableFromAnswer(reponse);
 		
-
 		var view = new google.visualization.DataView(data);
+		console.log(view);
 		/*creation de la liste des colonnes a afficher*/
 		var columns = [];
 		for (var i = 1; i <= view.getNumberOfColumns()-1; i++) {columns.push(i);}
@@ -243,4 +311,130 @@ function drawChronoAffiche(){
 		var table = new google.visualization.Table(document.getElementById('table_div'));
 		table.draw(view, {showRowNumber : true});
 	}
+}
+
+function drawDashBoardAffiche(){
+	google.charts.load('current', {'packages':['corechart', 'controls']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawDashboard);
+
+    function drawDashboard() {
+    	url = "https://docs.google.com/spreadsheets/d/"+
+		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
+		var queryD = createQueryDashboard();
+		console.log(queryD);	
+		sendQuery(url,queryD,RecevoirQueryDashboard);
+		function RecevoirQueryDashboard(reponse){
+			var dataD = extractDataTableFromAnswer(reponse);
+			var a = 0;
+			for(var i=0; i<dataD.getNumberOfRows(); i++ ){
+				for(var j=0; j<dataD.getNumberOfColumns(); j++ ){
+					if (!dataD.getValue(i,j)) {
+						dataD.setValue(i,j,a); 
+					}
+				}
+			}
+
+			var columnsTable = new google.visualization.DataTable();
+		    columnsTable.addColumn('number', 'colIndex');
+		    columnsTable.addColumn('string', 'colLabel');
+		    var initState= {selectedValues: []};
+		    // put the columns into this data table (skip column 0)
+		    for (var i = 1; i < dataD.getNumberOfColumns(); i++) {
+		        columnsTable.addRow([i, dataD.getColumnLabel(i)]);
+		        // you can comment out this next line if you want to have a default selection other than the whole list
+		        initState.selectedValues.push(dataD.getColumnLabel(i));
+		    }
+		    // you can set individual columns to be the default columns (instead of populating via the loop above) like this:
+		    // initState.selectedValues.push(data.getColumnLabel(4));
+		    
+		    var chart = new google.visualization.ChartWrapper({
+		        chartType: 'ColumnChart',
+		        containerId: 'chart_div',
+		        dataTable: dataD,
+		        options: {
+		            title: 'Chronogramme',
+		            width: 600,
+		            height: 400
+		        }
+		    });
+    
+		    var columnFilter = new google.visualization.ControlWrapper({
+		        controlType: 'CategoryFilter',
+		        containerId: 'colFilter_div',
+		        dataTable: columnsTable,
+		        options: {
+		            filterColumnLabel: 'colLabel',
+		            ui: {
+		                label: 'Techniques',
+		                allowTyping: false,
+		                allowMultiple: true,
+		                allowNone: false,
+		                selectedValuesLayout: 'belowStacked'
+		            }
+		        },
+		        state: initState
+		    });
+    
+		    function setChartView () {
+		        var state = columnFilter.getState();
+		        var row;
+		        var view = {
+		            columns: [0]
+		        };
+		        for (var i = 0; i < state.selectedValues.length; i++) {
+		            row = columnsTable.getFilteredRows([{column: 1, value: state.selectedValues[i]}])[0];
+		            view.columns.push(columnsTable.getValue(row, 0));
+		        }
+		        // sort the indices into their original order
+		        view.columns.sort(function (a, b) {
+		            return (a - b);
+		        });
+		        chart.setView(view);
+		        chart.draw();
+		    }
+		    google.visualization.events.addListener(columnFilter, 'statechange', setChartView);
+		    
+		    setChartView();
+		    columnFilter.draw();			
+			/*var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+    			// Create a range slider, passing some options
+	        var donutRangeSlider = new google.visualization.ControlWrapper({
+	          'controlType': 'NumberRangeFilter',
+	          'containerId': 'Cardinality_div',
+	          'options': {
+	            'filterColumnLabel': '-its'
+	          }
+	        });
+
+	        var donutRangeSlider1 = new google.visualization.ControlWrapper({
+	          'controlType': 'NumberRangeFilter',
+	          'containerId': 'Reachability_div',
+	          'options': {
+	            'filterColumnLabel': '-its -smt -ltsminpath'
+	          }
+	        });
+
+    		// Create a com chart, passing some options
+	        var ColumnChart = new google.visualization.ChartWrapper({
+	          'chartType': 'ColumnChart',
+	          'containerId': 'chart_div',
+	          'options': {
+	            'width': 1200,
+	            'height': 500,
+	            'pieSliceText': 'value',
+	            'legend': 'right'
+	          }
+	        });
+
+    		dashboard.bind(donutRangeSlider, ColumnChart);
+
+    		// Draw the dashboard.
+   			 dashboard.draw(dataD);*/
+
+
+		       		
+	    }
+    }
 }

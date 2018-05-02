@@ -10,7 +10,7 @@
 	<div>
 		<!--URL-->
 		<label for="key">Spreadsheet à analyser :</label>
-		<input type="text" id="key" placeholder="Spreadsheet Key" value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" />
+		<input type="text" id="key" placeholder="Spreadsheet Key" value="197-GlM8Lqk_ozBFgyoObUq7CnM03EIyEKMDK9DuMrNk" />
 		<!--choix de keyss preremplies-->
 		<label for="keysChoice"> ou </label>
 		<select id="keysChoice" onclick='document.getElementById("key").value = document.getElementById("keysChoice").value ;'>
@@ -27,7 +27,7 @@
 		<br />
 		<br />	
 	<!--formulaire de configuration-->
-	<form id="formConfig">
+	<form id="formConfig" name="monform">
 		<!--plage de builds-
 		<label for="fromBuild">Builds : de </label>
 		<input type="text" id="fromBuild" placeholder="401" value="401" />
@@ -77,12 +77,18 @@
 		</select>
 		<br />
 		<label for="model">modèle :</label>
-		<input type="text" id="model" placeholder="AirplaneLD-COL-0010" value="AirplaneLD-COL-0010" />
+		<select id="model" name="model" onchange="funExa(this.value)">
+			<option value=""></option>
+		</select><br />
+		<!-- <input type="text" id="model" placeholder="AirplaneLD-COL-0010" value="AirplaneLD-COL-0010" /> -->
 		<label for="regex">Regex ?</label>
 		<input type="checkbox" id="regex" checked />
 		<br />
 		<label for="examination"> examination :</label>
-		<input type="text" id="examination" placeholder="LTLCardinality" value="LTLCardinality" />
+		<select id="examination" name="examination">
+			<option value=""></option>
+		</select><br />
+		<!--<input type="text" id="examination" placeholder="LTLCardinality" value="LTLCardinality" /> -->
 		<br />
 		<!--booleen pour enlever les tests failed-->
 		<label for="removeFailedChrono">enlever les tests failed</label>
@@ -90,17 +96,28 @@
 		<br />
 		<!--bouton pour lancer la recherche Chronogramme-->
 		<input type="button" value="Chronogramme" onclick="google.charts.setOnLoadCallback(drawChronoAffiche())" />
+		<!--bouton pour lancer le dashboard -->
+		<input type="button" value="Dashboard" onclick="drawDashBoardAffiche()" />
 	</form>
 
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->
-	<div id="chrono_div" style="width: 600px; height: 300px; border : 1px #000 solid;"></div>
+	<div id="chrono_div" style="width: 750; height: 300px; border : 1px #000 solid;"></div>
 	<div id="table_div" style="width: 600px; height: 200px; border : 1px #000 solid;"></div>
 
 	 <!--Div that will hold the dashboard-->
-    <div id="dashboard_div">
+    <div id="dashboard_div1">
       <!--Divs that will hold each control and chart-->
       <div id="filter_div"></div>
       <div id="chart_div" style="width: 600px; height: 500px; border : 1px #000 solid;"></div>
+    </div>
+
+    <div id="dashboard_div" style="width: 600px; height: 400px; border : 1px red solid;" >
+      <!--Divs that will hold each control and chart-->
+      <div id="colFilter_div"></div>
+      <div id="chart_div"></div>
+      <div id="Reachability_div"></div>
+      <div id="Cardinality_div"></div>
+      <div id="chart_div"></div>
     </div>
 	
 
