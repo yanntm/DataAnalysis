@@ -7,12 +7,9 @@ var removeFailed;
 
 function startScatterChart() {
 
-	//extraction des variables du formulaire HTML
-	extractClientSettings();
-
 	//creation des Queries selon les variables extraites
-	var query1 = createQueryScatterChart(techX);
-	var query2 = createQueryScatterChart(techY);
+	var query1 = createQueryScatterChart("X");
+	var query2 = createQueryScatterChart("Y");
 
 	console.log("url: "+url+"\ncomparedType: "+comparedType+"\ntechX: "+techX+
 		"\ntechY: "+techY+"\nremoveFailed: "+removeFailed+"\nquery1: "+query1+"\nquery2: "+query2);
@@ -74,17 +71,24 @@ function startScatterChart() {
 	}
 }
 
-function extractClientSettings(){
+function createQueryScatterChart(axe){
+	//extraction des variables du formulaire HTML
 	url = "https://docs.google.com/spreadsheets/d/"+
 	document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 	
-	removeFailed = document.getElementById("removeFailed").checked;
-	techX = document.getElementById("techX").value;
-	techY = document.getElementById("techY").value;
+	var techniqueName;
+	var version;
+	if(axe=="X"){
+		techniqueName = document.getElementById("techX").value;
+		version = document.getElementById("versionX").value;
+	}
+	if(axe=="Y"){
+		techniqueName = document.getElementById("techY").value;
+		version = document.getElementById("versionY").value;
+	}
 	comparedType = document.getElementById("comparedType").value;
-}
+	removeFailed = document.getElementById("removeFailed").checked;
 
-function createQueryScatterChart(techniqueName){
 	//var locale pour construire la requete
 	var query;
 
@@ -94,7 +98,8 @@ function createQueryScatterChart(techniqueName){
 			sheetColumns['Examination']+', '+
 			comparedType ;
 	//clause WHERE : technique = [techniqueName] AND (optionnel) testFail = 0
-	query += ' WHERE '+sheetColumns['Techniques']+' ="'+techniqueName+'"';
+	query += ' WHERE '+sheetColumns['Techniques']+' ="'+techniqueName+'"'+
+			 ' AND '+sheetColumns['version']+' = '+version;
 	
 	if(removeFailed){
 		query += ' AND '+sheetColumns['Test fail']+' = 0';
