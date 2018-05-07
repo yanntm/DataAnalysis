@@ -101,7 +101,7 @@
 	</form>
 
 	<!--div des elements graphiques qui seront ajoutes par les fonctions JS-->
-	<div id="chrono_div" style="width: 750; height: 300px; border : 1px #000 solid;"></div>
+	<div id="chrono_div" style="width: auto; height: 300px; border : 1px #000 solid;"></div>
 	<div id="table_div" style="width: 600px; height: 200px; border : 1px #000 solid;"></div>
 
 	 <!--Div that will hold the dashboard-->
@@ -117,7 +117,6 @@
       <div id="chart_div"></div>
       <div id="Reachability_div"></div>
       <div id="Cardinality_div"></div>
-      <div id="chart_div"></div>
     </div>
 	
 

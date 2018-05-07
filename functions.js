@@ -286,8 +286,8 @@ function drawDashBoardAffiche(){
 		sendQuery(url,queryD,RecevoirQueryDashboard);
 		function RecevoirQueryDashboard(reponse){
 			var dataD = extractDataTableFromAnswer(reponse);
-			/*var a = 0;
-			for(var i=0; i<dataD.getNumberOfRows(); i++ ){
+			var a = 0;
+			/*for(var i=0; i<dataD.getNumberOfRows(); i++ ){
 				for(var j=0; j<dataD.getNumberOfColumns(); j++ ){
 					if (!dataD.getValue(i,j)) {
 						dataD.setValue(i,j,a); 
