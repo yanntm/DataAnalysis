@@ -34,22 +34,32 @@
 		<label for="toBuild"> jusqu'à </label>
 		<input type="text" id="toBuild" placeholder="500" value="500" />
 		<br />-->
-		
+
 		<!--type de la comparaison-->
-		<label for="comparedType">comparer sur</label>
+		<label for="comparedType">comparer sur </label>
 		<select id="comparedType" style="display:none"></select>
 		<br />
 		
 		<!--technique en abscisse dans le graphe-->
 		<label for="techX">technique en abscisse :</label>
-		<select id="techX" style="display:none"></select>
+		<select id="techX" style="display:none" onchange="retrieveVersionsNames('X')"></select>
+		<br />
+
+		<!--version de la technique en abscisse-->
+		<label for="versionX">Version en X:</label>
+		<select id="versionX" style="display:none"></select>
 		<br />
 		
 		<!--technique en ordonnee dans le graphe-->
 		<label for="techY">technique en ordonnée :</label>
-		<select id="techY" style="display:none"></select>
+		<select id="techY" style="display:none" onchange="retrieveVersionsNames('Y')"></select>
 		<br />
 		
+		<!--version de la technique en ordonnee-->
+		<label for="versionY">Version en Y:</label>
+		<select id="versionY" style="display:none"></select>
+		<br />
+
 		<!--booleen pour enlever les tests failed-->
 		<label for="removeFailed">enlever les tests failed</label>
 		<input type="checkbox" id="removeFailed" checked />
