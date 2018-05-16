@@ -31,7 +31,8 @@
 			<option value="1k1vyrsKs8A8aXDs4HkwkgHPCWvW-41h_F6PS93GHjbo">csv101-200</option>
 			<option value="1MCmsdKAIQKuC9amV3V2XeKL6GpCxNG5aeU0byjt8agg">csv201-300</option>
 			<option value="1FxiAz3-yENo_WQyM9_g8m9r_7BTYlu1Isqe5iuWcPUo">csv301-400</option>
-			<option value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco" selected>csv401-500</option>
+			<option value="1Yhsm4LnZvbe-dEENoEKff-Z0Zfa2zu-GN_Aa3NJDbco">csv401-500</option>
+			<option value="197-GlM8Lqk_ozBFgyoObUq7CnM03EIyEKMDK9DuMrNk" selected>logBig0304</option>
 		</select>
 		<!--reload menu button-->
 		<input type="button" value="Load Menu" onclick="initialisation()" />
@@ -52,14 +53,6 @@
 	    <h1>Comparaison de deux Techniques dans un Scatter Chart</h1>
 		<form id="formConfig" name="monformScatter">
 		<table>
-   			<tr>
-		       <td><label for="fromBuild">Builds : de </label></td>
-		       <td><input type="text" id="fromBuild" placeholder="401" value="401" /></td>
-		   </tr>
-		   <tr>
-		       <td><label for="toBuild"> jusqu'à </label></td>
-		       <td><input type="text" id="toBuild" placeholder="500" value="500" /></td>
-		   </tr>
 		   <tr>
 		       <td><label for="comparedType">comparer sur </label></td>
 		       <td><select id="comparedType" style="display:none"></select></td>
@@ -138,24 +131,22 @@
 		       	</td>
 		   	</tr>
 		   	<tr>
-		       	<td><label for="model">modèle :</label></td>
+		       	<td><label for="techChrono">Technique :</label></td>
 		       	<td>
-		       		<select id="model" name="model" onchange="funExa(this.value)">
-						<option value=""></option>
-					</select>
+		       		<select id="techChrono" onchange="funExa(this.value)" style="display:none"></select>
 				</td>
+		   	</tr>
+		   	<tr>
+		       	<td><label for="examination"> examination :</label></td>
+		       	<td><select id="examination" name="examination" style="display:none"></select></td>
+		   	</tr>
+		   	<tr>
+		   		<td><label for="model">modèle :</label></td>
+				<td><input type="text" id="model" placeholder=".*" value="AirplaneLD-COL-0010" /></td>
 		   	</tr>
 		   	<tr>
 		       	<td><label for="regex">Regex ?</label></td>
 		       	<td><input type="checkbox" id="regex" checked /></td>
-		   	</tr>
-		   	<tr>
-		       	<td><label for="examination"> examination :</label></td>
-		       	<td>
-		       		<select id="examination" name="examination">
-						<option value=""></option>
-					</select>
-		       	</td>
 		   	</tr>
 		   	<tr>
 		       	<td><label for="removeFailedChrono">enlever les tests failed</label></td>

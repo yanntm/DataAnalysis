@@ -38,7 +38,6 @@ function retrieveColumnsNames(){
 		retrieveTechniquesNames();
 
 		retrieveVersions(data);
-		retrieveModel(data);
 
 	});
 
@@ -85,7 +84,7 @@ function retrieveColumnsNames(){
 		});
 	}
 
-	function retrieveModel(data){
+	/*function retrieveModel(data){
 		var versionColumnId;
 		for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Model/i); i++){
 		}
@@ -107,42 +106,71 @@ function retrieveColumnsNames(){
 		 		document.monformChrono.model.options[i].text=ListeModel[i];
 		 	}
 		});
-	}
+	}*/
+
+	/*function retrieveExamination(data){
+		var versionColumnId;
+		for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Examination/i); i++){
+		}
+		ExaColumnId = data.getColumnId(i);
+
+		var query = "SELECT "+ExaColumnId+", count("+ExaColumnId+") GROUP BY "+ExaColumnId;
+		var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
+		queryEncoded.send( function(response){
+			var dt1 = extractDataTableFromAnswer(response);
+			console.log("Le nombre d'examinations: "+dt1.getNumberOfRows());
+			var ListeExa = new Array();
+			for(var i=0; i<dt1.getNumberOfRows()-1; i++ ) 
+		 		//console.log(dt1.getValue(i, 0));
+		 		ListeExa[i] = dt1.getValue(i, 0);
+		 	
+		 	document.monformChrono.examination.options.length = ListeExa.length;
+		 	for (var i = 0 ;i < ListeExa.length; i++) {
+		 		document.monformChrono.examination.options[i].value=ListeExa[i];
+		 		document.monformChrono.examination.options[i].text=ListeExa[i];
+		 	}
+		});
+	}*/
 }
 
-function funExa(model){
+
+function funExa(technique){
 	var url = "https://docs.google.com/spreadsheets/d/"+
 		document.getElementById("key").value+"/gviz/tq?sheet=Sheet1&headers=1&tq=";
 
-	console.log("La valeur du modesl est :" +model);
-	/*var modelColumnId;
-	var examinationColumnId;
-	for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Model/i); i++){
-	}
-	modelColumnId = data.getColumnId(i);
-
-	for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Examination/i); i++){
-	}
-	examinationColumnId = data.getColumnId(i);*/
+	console.log("La valeur de la technique est :" +technique);
 
 	//var query = "SELECT "+examinationColumnId+"WHERE "+modelColumnId+" = "+model;
-	var query = "SELECT C WHERE B=\'" +model+ "\'";
+	var query = "SELECT "+sheetColumns["Examination"]+", count("+sheetColumns["Techniques"]+
+	" WHERE "+sheetColumns["Techniques"]+"=\'" +technique+ "\'";
+
+	var query = "SELECT "+sheetColumns["Examination"]+
+		", count("+sheetColumns["Examination"]+")"+
+		" WHERE "+sheetColumns["Techniques"]+"=\'" +technique+ "\'"+
+		" GROUP BY "+sheetColumns["Examination"];
+
+
 	var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
 	queryEncoded.send( function(response){
-			var Liste = extractDataTableFromAnswer(response);
-			//console.log("Le nombre d'examination du Model: "+Liste.getNumberOfRows());
-			var ListeExam = new Array();
-			for(var i=0; i<Liste.getNumberOfRows()-1; i++ ) 
-		 		//console.log(Liste.getValue(i, 0));
-		 		ListeExam[i] = Liste.getValue(i, 0);
-		 	//console.log("La taille de la liste: "+ListeExam.length);
-		 	var newListe = cleanArray(ListeExam);
-		 	//console.log("La taille de nouvelle liste: "+newListe.length);
-		 	document.monformChrono.examination.options.length = newListe.length;
-		 	for (var i = 0 ;i < ListeExam.length; i++) {
-		 		document.monformChrono.examination.options[i].value=newListe[i];
-		 		document.monformChrono.examination.options[i].text=newListe[i];
-		 	}
+			
+			var data = extractDataTableFromAnswer(response);
+			//console.log("Le nombre d'examinations de la Technique: "+Liste.getNumberOfRows());
+
+
+			cleanElem("examination");
+		 	var exaMenu = document.getElementById("examination");
+
+		 	for (var i=0; i<data.getNumberOfRows(); i++) {
+		 		/*ON NE GARDE PAS LES TECHNIQUES QUI ONT <= 1 RESULTAT*/
+				if(data.getValue(i,1)>1){
+		 			var opt = document.createElement('option');
+					opt.innerHTML = "("+data.getValue(i,1)+"): "+data.getValue(i,0);
+		    		opt.value = data.getValue(i,0);
+		    		exaMenu.appendChild(opt);
+		    	}
+		    }
+
+			exaMenu.style.display = 'inline';    
 	});
 }
 
@@ -184,14 +212,17 @@ function retrieveTechniquesNames(){
 		/*dropdown menus auxquels on veut ajouter les options*/
 		var menu1 = document.getElementById("techX");
 		var menu2 = document.getElementById("techY");
+		var menu3 = document.getElementById("techChrono");
 
 		/*ajout des options*/
 		menu1.appendChild(fragment.cloneNode(true));
 		menu2.appendChild(fragment.cloneNode(true));
+		menu3.appendChild(fragment.cloneNode(true));
 
 		/*on rend les menus visibles dans le document HTML*/
 		menu1.style.display = 'inline';
 		menu2.style.display = 'inline';
+		menu3.style.display = 'inline';
 
 		retrieveVersionsNames("X");
 		retrieveVersionsNames("Y");

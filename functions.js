@@ -110,8 +110,9 @@ function createQueryScatterChart(axe){
 
 function createQueryChronogramme(){
 	/*on extrait les parametres utiles renseignes dans le formulaire*/
-	var model = document.getElementById("model").value;
+	var technique = document.getElementById("techChrono").value;
 	var examination = document.getElementById("examination").value;
+	var model = document.getElementById("model").value;
 	var isRegex = document.getElementById("regex").checked;
 	var comparedColumn = document.getElementById("comparedColumn").value;
 	var aggreg = document.getElementById("aggreg").value;
@@ -133,8 +134,9 @@ function createQueryChronogramme(){
 	var query = "SELECT "+sheetColumns['version']+","+selectField;
 
 	//WHERE
-	query += " WHERE "+BEqualOrRegexModel+" and "+
-		sheetColumns['Examination']+"=\'" +examination+ "\'";
+	query += " WHERE "+sheetColumns["Techniques"]+"=\'"+technique+"\'"+
+		" and "+ sheetColumns['Examination']+"=\'" +examination+ "\'"+
+		" and "+ BEqualOrRegexModel;
 
 	/*suppression ou non des testFailed*/
 	if(removeFailed){
@@ -143,7 +145,7 @@ function createQueryChronogramme(){
 
 	//GROUP BY PIVOT ORDER BY
 	query += " GROUP BY "+sheetColumns['version']+
-		" PIVOT "+sheetColumns['Techniques']+
+		" PIVOT "+sheetColumns['Model']+
 		" ORDER BY "+sheetColumns['version'];
 
 	return query;
