@@ -101,10 +101,10 @@ function retrieveColumnsNames(){
 		 		//console.log(dt1.getValue(i, 0));
 		 		ListeModel[i] = dt1.getValue(i, 0);
 		 	
-		 	document.monform.model.options.length = ListeModel.length;
+		 	document.monformChrono.model.options.length = ListeModel.length;
 		 	for (var i = 0 ;i < ListeModel.length; i++) {
-		 		document.monform.model.options[i].value=ListeModel[i];
-		 		document.monform.model.options[i].text=ListeModel[i];
+		 		document.monformChrono.model.options[i].value=ListeModel[i];
+		 		document.monformChrono.model.options[i].text=ListeModel[i];
 		 	}
 		});
 	}
@@ -138,10 +138,10 @@ function funExa(model){
 		 	//console.log("La taille de la liste: "+ListeExam.length);
 		 	var newListe = cleanArray(ListeExam);
 		 	//console.log("La taille de nouvelle liste: "+newListe.length);
-		 	document.monform.examination.options.length = newListe.length;
+		 	document.monformChrono.examination.options.length = newListe.length;
 		 	for (var i = 0 ;i < ListeExam.length; i++) {
-		 		document.monform.examination.options[i].value=newListe[i];
-		 		document.monform.examination.options[i].text=newListe[i];
+		 		document.monformChrono.examination.options[i].value=newListe[i];
+		 		document.monformChrono.examination.options[i].text=newListe[i];
 		 	}
 	});
 }
