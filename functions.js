@@ -11,6 +11,9 @@ function startScatterChart() {
 	var query1 = createQueryScatterChart("X");
 	var query2 = createQueryScatterChart("Y");
 
+	techX = document.getElementById("techX").value;
+	techY = document.getElementById("techY").value;
+
 	console.log("url: "+url+"\ncomparedType: "+comparedType+"\ntechX: "+techX+
 		"\ntechY: "+techY+"\nremoveFailed: "+removeFailed+"\nquery1: "+query1+"\nquery2: "+query2);
 	
