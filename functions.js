@@ -51,6 +51,8 @@ function startScatterChart() {
 			hAxis: {title: techX},
 			vAxis: {title: techY},
 
+			height: 500,
+
 			seriesType: 'scatter',
 			series: {
 				1: {type: 'line'}
