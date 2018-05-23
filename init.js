@@ -84,53 +84,6 @@ function retrieveColumnsNames(){
 		});
 	}
 
-	/*function retrieveModel(data){
-		var versionColumnId;
-		for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Model/i); i++){
-		}
-		ModelColumnId = data.getColumnId(i);
-
-		var query = "SELECT "+ModelColumnId+", count("+ModelColumnId+") GROUP BY "+ModelColumnId;
-		var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
-		queryEncoded.send( function(response){
-			var dt1 = extractDataTableFromAnswer(response);
-			console.log("Le nombre de Model: "+dt1.getNumberOfRows());
-			var ListeModel = new Array();
-			for(var i=0; i<dt1.getNumberOfRows()-1; i++ ) 
-		 		//console.log(dt1.getValue(i, 0));
-		 		ListeModel[i] = dt1.getValue(i, 0);
-		 	
-		 	document.monformChrono.model.options.length = ListeModel.length;
-		 	for (var i = 0 ;i < ListeModel.length; i++) {
-		 		document.monformChrono.model.options[i].value=ListeModel[i];
-		 		document.monformChrono.model.options[i].text=ListeModel[i];
-		 	}
-		});
-	}*/
-
-	/*function retrieveExamination(data){
-		var versionColumnId;
-		for(var i=0; i<=data.getNumberOfColumns() && data.getColumnLabel(i).search(/Examination/i); i++){
-		}
-		ExaColumnId = data.getColumnId(i);
-
-		var query = "SELECT "+ExaColumnId+", count("+ExaColumnId+") GROUP BY "+ExaColumnId;
-		var queryEncoded = new google.visualization.Query(url + encodeURIComponent(query));
-		queryEncoded.send( function(response){
-			var dt1 = extractDataTableFromAnswer(response);
-			console.log("Le nombre d'examinations: "+dt1.getNumberOfRows());
-			var ListeExa = new Array();
-			for(var i=0; i<dt1.getNumberOfRows()-1; i++ ) 
-		 		//console.log(dt1.getValue(i, 0));
-		 		ListeExa[i] = dt1.getValue(i, 0);
-		 	
-		 	document.monformChrono.examination.options.length = ListeExa.length;
-		 	for (var i = 0 ;i < ListeExa.length; i++) {
-		 		document.monformChrono.examination.options[i].value=ListeExa[i];
-		 		document.monformChrono.examination.options[i].text=ListeExa[i];
-		 	}
-		});
-	}*/
 }
 
 
@@ -279,16 +232,22 @@ function retrieveVersionsNames(axe){
 		}
 
 		/*dropdown menus auxquels on veut ajouter les options*/
-		var menu1 = document.getElementById("versionX");
-		var menu2 = document.getElementById("versionY");
+		if(axe=="X"){
+			var menu1 = document.getElementById("versionX");
+			menu1.appendChild(fragment.cloneNode(true));
+			menu1.style.display = 'inline';
+		}
+		else if(axe=="Y"){
+			var menu2 = document.getElementById("versionY");
+			menu2.appendChild(fragment.cloneNode(true));
+			menu2.style.display = 'inline';
+		}
+
 
 		/*ajout des options*/
-		menu1.appendChild(fragment.cloneNode(true));
-		menu2.appendChild(fragment.cloneNode(true));
 
 		/*on rend les menus visibles dans le document HTML*/
-		menu1.style.display = 'inline';
-		menu2.style.display = 'inline';
+
 	}
 }
 
